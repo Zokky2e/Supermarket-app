@@ -14,63 +14,81 @@ namespace Supermarket.WebAPI.Controllers
     public class EmployeeController : ApiController
     {
         // GET: api/employee
-        public IHttpActionResult Get()
+        List<string> employees = new List<string>() { "pero", "marko" };
+        public HttpResponseMessage GetAllEmployees()
         {
-            
-            List<string> employees = new List<string>();
-            //get employees from db
+
             if (employees.Count == 0)
             {
-                return NotFound();
+                return Request.CreateResponse<string>(HttpStatusCode.NotFound, "List of employees is empty");
             }
-
-            return Ok(employees);
+            //get employees from db
+            return Request.CreateResponse<List<string>>(HttpStatusCode.OK, employees);
         }
 
         // GET: api/employee/5
-        public IHttpActionResult Get(int id)
+        public HttpResponseMessage Get(int id)
         {
-            //find employee with the id
-            if (id == 0)//simulating not found
+            //find product with the id
+            if (employees.Count == 0)
             {
-                return NotFound();
+                return Request.CreateResponse<string>(HttpStatusCode.NotFound, "List of products is empty");
             }
-            return Ok(id);
+            else if (id < 0 || id >= employees.Count())//simulating not found
+            {
+                return Request.CreateResponse<string>(HttpStatusCode.NotFound, "Product not found");
+            }
+
+            return Request.CreateResponse<string>(HttpStatusCode.OK, employees[id]);
         }
 
         // POST: api/employee
-        public IHttpActionResult Post([FromBody] Employee employee)
+        public HttpResponseMessage Post([FromBody] Employee employee)
         {
 
             if (employee.Name == null || employee.Name == "")
             {
-                return BadRequest("Invalid data.");
+                return Request.CreateResponse<string>(HttpStatusCode.BadRequest, "Employee info is not valid");
             }
-            //enter new employee into db
-            return Ok();
+            //enter new product into db
+            employees.Add(employee.Name);
+            return Request.CreateResponse<string>(HttpStatusCode.OK, "Employee has been added");
         }
 
         // PUT: api/employee/5
-        public IHttpActionResult Put(int id, [FromBody] Employee employee)
+        public HttpResponseMessage Put(int id, [FromBody] Employee employee)
         {
             //enter new employee into db
-            if (id == 0)
+            if (employees.Count == 0)
             {
-                return NotFound();
+                return Request.CreateResponse<string>(HttpStatusCode.NotFound, "List of employees is empty");
+            }
+            else if (id < 0 || id >= employees.Count())//simulating not found
+            {
+                return Request.CreateResponse<string>(HttpStatusCode.NotFound, "Employee not found");
             }
             else if (employee.Name == null || employee.Name == "")
             {
-                return BadRequest("Not a valid model");
+                return Request.CreateResponse<string>(HttpStatusCode.BadRequest, "Employee info is not valid");
             }
-            return Ok();
+            return Request.CreateResponse<string>(HttpStatusCode.OK, "Employee info edited");
+
         }
 
         // DELETE: api/employee/5
-        public IHttpActionResult Delete(int id)
+        public HttpResponseMessage Delete(int id)
         {
-            if (id <= 0)
-                return BadRequest("Not a valid Employee id");
-            return Ok();
+            //find product with the id
+            if (employees.Count == 0)
+            {
+                return Request.CreateResponse<string>(HttpStatusCode.NotFound, "List of employees is empty");
+            }
+            else if (id < 0 || id >= employees.Count())//simulating not found
+            {
+                return Request.CreateResponse<string>(HttpStatusCode.NotFound, "Employee not found");
+            }
+
+            return Request.CreateResponse<string>(HttpStatusCode.OK, "Employee removed");
         }
     }
 }
