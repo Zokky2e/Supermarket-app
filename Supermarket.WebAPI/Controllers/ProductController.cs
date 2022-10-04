@@ -10,11 +10,27 @@ namespace Supermarket.WebAPI.Controllers
     public class Product
     {
         public string Key { get; set; }
+        public Product(string key)
+        {
+            Key = key;
+        }
+    }
+    public class ProductManager
+    {
+        public List<Product> Products { get; set; }
+        public ProductManager()
+        {
+            Products = new List<Product>() { new Product("apple") };
+        }
     }
     public class ProductController : ApiController
     {
-        List<string> products = new List<string>() { "apple" };
 
+        public ProductManager Manager { get; set; }
+        public ProductController()
+        {
+            Manager = new ProductManager();
+        }
 
         // GET: api/product
         [HttpGet]
@@ -22,28 +38,28 @@ namespace Supermarket.WebAPI.Controllers
         {
             //get products from db
 
-            if (products.Count == 0)
+            if (Manager.Products.Count == 0)
             {
                 return Request.CreateResponse<string>(HttpStatusCode.NotFound, "List of products is empty");
             }
 
-            return Request.CreateResponse<List<string>>(HttpStatusCode.OK, products);
+            return Request.CreateResponse<List<Product>>(HttpStatusCode.OK, Manager.Products);
         }
 
         // GET: api/product/5
         public HttpResponseMessage Get(int id)
         {
             //find product with the id
-            if (products.Count == 0)
+            if (Manager.Products.Count == 0)
             {
                 return Request.CreateResponse<string>(HttpStatusCode.NotFound, "List of products is empty");
             }
-            else if (id < 0 || id >= products.Count())//simulating not found
+            else if (id < 0 || id >= Manager.Products.Count())//simulating not found
             {
                 return Request.CreateResponse<string>(HttpStatusCode.NotFound, "Product not found");
             }
 
-            return Request.CreateResponse<string>(HttpStatusCode.OK, products[id]);
+            return Request.CreateResponse<Product>(HttpStatusCode.OK, Manager.Products[id]);
         }
 
         // POST: api/Product
@@ -55,7 +71,7 @@ namespace Supermarket.WebAPI.Controllers
                 return Request.CreateResponse<string>(HttpStatusCode.BadRequest, "Product is not valid");
             }
             //enter new product into db
-            products.Add(product.Key);
+            Manager.Products.Add(product);
             return Request.CreateResponse<string>(HttpStatusCode.OK, "Product has been added");
         }
 
@@ -63,11 +79,11 @@ namespace Supermarket.WebAPI.Controllers
         public HttpResponseMessage Put(int id, [FromBody] Product product)
         {
             //enter new employee into db
-            if (products.Count == 0)
+            if (Manager.Products.Count == 0)
             {
                 return Request.CreateResponse<string>(HttpStatusCode.NotFound, "List of products is empty");
             }
-            else if (id < 0 || id >= products.Count())//simulating not found
+            else if (id < 0 || id >= Manager.Products.Count())//simulating not found
             {
                 return Request.CreateResponse<string>(HttpStatusCode.NotFound, "Product not found");
             }
@@ -75,7 +91,7 @@ namespace Supermarket.WebAPI.Controllers
             {
                 return Request.CreateResponse<string>(HttpStatusCode.BadRequest, "Product info is not valid");
             }
-            products[id] = product.Key;
+            Manager.Products[id] = product;
             return Request.CreateResponse<string>(HttpStatusCode.OK, "Product info edited");
 
         }
@@ -84,15 +100,15 @@ namespace Supermarket.WebAPI.Controllers
         public HttpResponseMessage Delete(int id)
         {
             //find product with the id
-            if (products.Count == 0)
+            if (Manager.Products.Count == 0)
             {
                 return Request.CreateResponse<string>(HttpStatusCode.NotFound, "List of products is empty");
             }
-            else if (id < 0 || id >= products.Count())//simulating not found
+            else if (id < 0 || id >= Manager.Products.Count())//simulating not found
             {
                 return Request.CreateResponse<string>(HttpStatusCode.NotFound, "Product not found");
             }
-
+            Manager.Products.Remove(Manager.Products[id]);
             return Request.CreateResponse<string>(HttpStatusCode.OK, "Product removed");
         }
     }
