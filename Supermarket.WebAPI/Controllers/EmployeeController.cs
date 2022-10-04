@@ -17,7 +17,7 @@ namespace Supermarket.WebAPI.Controllers
     }
     public class EmployeeManager
     {
-        public List<Employee> Employees { get; set; }
+        static public List<Employee> Employees { get; set; }
         public EmployeeManager()
         {
             Employees = new List<Employee>() { new Employee("Pero") };
@@ -34,28 +34,28 @@ namespace Supermarket.WebAPI.Controllers
         public HttpResponseMessage GetAllEmployees()
         {
 
-            if (Manager.Employees.Count == 0)
+            if (EmployeeManager.Employees.Count == 0)
             {
                 return Request.CreateResponse<string>(HttpStatusCode.NotFound, "List of employees is empty");
             }
             //get employees from db
-            return Request.CreateResponse<List<Employee>>(HttpStatusCode.OK, Manager.Employees);
+            return Request.CreateResponse<List<Employee>>(HttpStatusCode.OK, EmployeeManager.Employees);
         }
 
         // GET: api/employee/5
         public HttpResponseMessage Get(int id)
         {
             //find product with the id
-            if (Manager.Employees.Count == 0)
+            if (EmployeeManager.Employees.Count == 0)
             {
                 return Request.CreateResponse<string>(HttpStatusCode.NotFound, "List of products is empty");
             }
-            else if (id < 0 || id >= Manager.Employees.Count())//simulating not found
+            else if (id < 0 || id >= EmployeeManager.Employees.Count())//simulating not found
             {
                 return Request.CreateResponse<string>(HttpStatusCode.NotFound, "Product not found");
             }
 
-            return Request.CreateResponse<Employee>(HttpStatusCode.OK, Manager.Employees[id]);
+            return Request.CreateResponse<Employee>(HttpStatusCode.OK, EmployeeManager.Employees[id]);
         }
 
         // POST: api/employee
@@ -67,7 +67,7 @@ namespace Supermarket.WebAPI.Controllers
                 return Request.CreateResponse<string>(HttpStatusCode.BadRequest, "Employee info is not valid");
             }
             //enter new product into db
-            Manager.Employees.Add(employee);
+            EmployeeManager.Employees.Add(employee);
             return Request.CreateResponse<string>(HttpStatusCode.OK, "Employee has been added");
         }
 
@@ -75,11 +75,11 @@ namespace Supermarket.WebAPI.Controllers
         public HttpResponseMessage Put(int id, [FromBody] Employee employee)
         {
             //enter new employee into db
-            if (Manager.Employees.Count == 0)
+            if (EmployeeManager.Employees.Count == 0)
             {
                 return Request.CreateResponse<string>(HttpStatusCode.NotFound, "List of employees is empty");
             }
-            else if (id < 0 || id >= Manager.Employees.Count())//simulating not found
+            else if (id < 0 || id >= EmployeeManager.Employees.Count())//simulating not found
             {
                 return Request.CreateResponse<string>(HttpStatusCode.NotFound, "Employee not found");
             }
@@ -87,7 +87,7 @@ namespace Supermarket.WebAPI.Controllers
             {
                 return Request.CreateResponse<string>(HttpStatusCode.BadRequest, "Employee info is not valid");
             }
-            Manager.Employees[id] = employee;
+            EmployeeManager.Employees[id] = employee;
             return Request.CreateResponse<string>(HttpStatusCode.OK, "Employee info edited");
 
         }
@@ -96,16 +96,16 @@ namespace Supermarket.WebAPI.Controllers
         public HttpResponseMessage Delete(int id)
         {
             //find product with the id
-            if (Manager.Employees.Count == 0)
+            if (EmployeeManager.Employees.Count == 0)
             {
                 return Request.CreateResponse<string>(HttpStatusCode.NotFound, "List of employees is empty");
             }
-            else if (id < 0 || id >= Manager.Employees.Count())//simulating not found
+            else if (id < 0 || id >= EmployeeManager.Employees.Count())//simulating not found
             {
                 return Request.CreateResponse<string>(HttpStatusCode.NotFound, "Employee not found");
             }
             //simulate delete
-            Manager.Employees.Remove(Manager.Employees[id]);
+            EmployeeManager.Employees.Remove(EmployeeManager.Employees[id]);
             return Request.CreateResponse<string>(HttpStatusCode.OK, "Employee removed");
         }
     }
