@@ -158,7 +158,6 @@
     <Compile Include="Controllers\EmployeeController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ProductController.cs" />
-    <Compile Include="Controllers\ValuesController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -247,6 +246,16 @@
     <None Include="packages.config" />
     <Content Include="Scripts\jquery-3.4.1.slim.min.map" />
     <Content Include="Scripts\jquery-3.4.1.min.map" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Supermarket.Model\Supermarket.Model.csproj">
+      <Project>{2A9FF0D4-6EA2-414B-82F6-A345933A4000}</Project>
+      <Name>Supermarket.Model</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Supermarket.Service\Supermarket.Service.csproj">
+      <Project>{D9F28B63-0088-43BF-BD4F-8427290EA510}</Project>
+      <Name>Supermarket.Service</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

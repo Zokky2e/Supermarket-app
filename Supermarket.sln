@@ -4,6 +4,41 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 17.3.32922.545
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Supermarket.WebAPI", "Supermarket.WebAPI\Supermarket.WebAPI.csproj", "{860CB026-9156-4BF7-BAF6-7D57ACC7DF1A}"
+	ProjectSection(ProjectDependencies) = postProject
+		{2A9FF0D4-6EA2-414B-82F6-A345933A4000} = {2A9FF0D4-6EA2-414B-82F6-A345933A4000}
+		{A4611254-3CCA-4F7F-B04C-5AB4E2403FCD} = {A4611254-3CCA-4F7F-B04C-5AB4E2403FCD}
+		{BB62AA27-04E2-4668-B919-13C2FB953650} = {BB62AA27-04E2-4668-B919-13C2FB953650}
+		{C1071452-6CFF-4E11-9BD3-FEF584F5A76A} = {C1071452-6CFF-4E11-9BD3-FEF584F5A76A}
+		{D9F28B63-0088-43BF-BD4F-8427290EA510} = {D9F28B63-0088-43BF-BD4F-8427290EA510}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Supermarket.Service", "Supermarket.Service\Supermarket.Service.csproj", "{D9F28B63-0088-43BF-BD4F-8427290EA510}"
+	ProjectSection(ProjectDependencies) = postProject
+		{C1071452-6CFF-4E11-9BD3-FEF584F5A76A} = {C1071452-6CFF-4E11-9BD3-FEF584F5A76A}
+		{C6776FDD-7BF2-4DA7-B242-1D69C7A52BAB} = {C6776FDD-7BF2-4DA7-B242-1D69C7A52BAB}
+		{CDBC7DA5-B2B7-47BC-94A7-1853D0C8FAA4} = {CDBC7DA5-B2B7-47BC-94A7-1853D0C8FAA4}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Supermarket.Repository", "Supermarket.Repository\Supermarket.Repository.csproj", "{C6776FDD-7BF2-4DA7-B242-1D69C7A52BAB}"
+	ProjectSection(ProjectDependencies) = postProject
+		{7AE6D860-93CD-4047-82D7-22003CDBE965} = {7AE6D860-93CD-4047-82D7-22003CDBE965}
+		{C1071452-6CFF-4E11-9BD3-FEF584F5A76A} = {C1071452-6CFF-4E11-9BD3-FEF584F5A76A}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Supermarket.DAL", "Supermarket.DAL\Supermarket.DAL.csproj", "{7AE6D860-93CD-4047-82D7-22003CDBE965}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Supermarket.Repository.Common", "Supermarket.Repository.Common\Supermarket.Repository.Common.csproj", "{CDBC7DA5-B2B7-47BC-94A7-1853D0C8FAA4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Supermarket.Service.Common", "Supermarket.Service.Common\Supermarket.Service.Common.csproj", "{A4611254-3CCA-4F7F-B04C-5AB4E2403FCD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Supermarket.Model", "Supermarket.Model\Supermarket.Model.csproj", "{2A9FF0D4-6EA2-414B-82F6-A345933A4000}"
+	ProjectSection(ProjectDependencies) = postProject
+		{BB62AA27-04E2-4668-B919-13C2FB953650} = {BB62AA27-04E2-4668-B919-13C2FB953650}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Supermarket.Model.Common", "Supermarket.Model.Common\Supermarket.Model.Common.csproj", "{BB62AA27-04E2-4668-B919-13C2FB953650}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Supermarket.Common", "Supermarket.Common\Supermarket.Common.csproj", "{C1071452-6CFF-4E11-9BD3-FEF584F5A76A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +50,38 @@ Global
 		{860CB026-9156-4BF7-BAF6-7D57ACC7DF1A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{860CB026-9156-4BF7-BAF6-7D57ACC7DF1A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{860CB026-9156-4BF7-BAF6-7D57ACC7DF1A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D9F28B63-0088-43BF-BD4F-8427290EA510}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D9F28B63-0088-43BF-BD4F-8427290EA510}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D9F28B63-0088-43BF-BD4F-8427290EA510}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D9F28B63-0088-43BF-BD4F-8427290EA510}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C6776FDD-7BF2-4DA7-B242-1D69C7A52BAB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C6776FDD-7BF2-4DA7-B242-1D69C7A52BAB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C6776FDD-7BF2-4DA7-B242-1D69C7A52BAB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C6776FDD-7BF2-4DA7-B242-1D69C7A52BAB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7AE6D860-93CD-4047-82D7-22003CDBE965}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7AE6D860-93CD-4047-82D7-22003CDBE965}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7AE6D860-93CD-4047-82D7-22003CDBE965}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7AE6D860-93CD-4047-82D7-22003CDBE965}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CDBC7DA5-B2B7-47BC-94A7-1853D0C8FAA4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CDBC7DA5-B2B7-47BC-94A7-1853D0C8FAA4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CDBC7DA5-B2B7-47BC-94A7-1853D0C8FAA4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CDBC7DA5-B2B7-47BC-94A7-1853D0C8FAA4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A4611254-3CCA-4F7F-B04C-5AB4E2403FCD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A4611254-3CCA-4F7F-B04C-5AB4E2403FCD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A4611254-3CCA-4F7F-B04C-5AB4E2403FCD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A4611254-3CCA-4F7F-B04C-5AB4E2403FCD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2A9FF0D4-6EA2-414B-82F6-A345933A4000}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2A9FF0D4-6EA2-414B-82F6-A345933A4000}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2A9FF0D4-6EA2-414B-82F6-A345933A4000}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2A9FF0D4-6EA2-414B-82F6-A345933A4000}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BB62AA27-04E2-4668-B919-13C2FB953650}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BB62AA27-04E2-4668-B919-13C2FB953650}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BB62AA27-04E2-4668-B919-13C2FB953650}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BB62AA27-04E2-4668-B919-13C2FB953650}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C1071452-6CFF-4E11-9BD3-FEF584F5A76A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C1071452-6CFF-4E11-9BD3-FEF584F5A76A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C1071452-6CFF-4E11-9BD3-FEF584F5A76A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C1071452-6CFF-4E11-9BD3-FEF584F5A76A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

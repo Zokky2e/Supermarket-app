@@ -1,114 +1,88 @@
-﻿using System;
+﻿using Supermarket.Model;
+using Supermarket.Service;
+using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
+using System.Xml.Linq;
 
 namespace Supermarket.WebAPI.Controllers
 {
-    public class Product
-    {
-        public string Key { get; set; }
-        public Product(string key)
-        {
-            Key = key;
-        }
-    }
-    public class ProductManager
-    {
-        static public List<Product> Products { get; set; }
-        public ProductManager()
-        {
-            Products = new List<Product>() { new Product("apple") };
-        }
-    }
+    
+    
     public class ProductController : ApiController
     {
 
-        public ProductManager Manager { get; set; }
+        public ProductService Service { get; set; }
         public ProductController()
         {
-            Manager = new ProductManager();
+            Service = new ProductService();
         }
 
         // GET: api/product
         [HttpGet]
         public HttpResponseMessage GetAllProducts()
         {
-            //get products from db
-
-            if (ProductManager.Products.Count == 0)
+            
+            List<Product> products = Service.GetAllProducts();
+            if (products.Count == 0)
             {
                 return Request.CreateResponse<string>(HttpStatusCode.NotFound, "List of products is empty");
             }
-
-            return Request.CreateResponse<List<Product>>(HttpStatusCode.OK, ProductManager.Products);
+            return Request.CreateResponse<List<Product>>(HttpStatusCode.OK, products);
         }
 
         // GET: api/product/5
-        public HttpResponseMessage Get(int id)
+        public HttpResponseMessage Get(string name)
         {
             //find product with the id
-            if (ProductManager.Products.Count == 0)
+            Product product = Service.GetProduct(name);
+            if (product.Name == "" || product.Name == null)
             {
-                return Request.CreateResponse<string>(HttpStatusCode.NotFound, "List of products is empty");
-            }
-            else if (id < 0 || id >= ProductManager.Products.Count())//simulating not found
-            {
-                return Request.CreateResponse<string>(HttpStatusCode.NotFound, "Product not found");
+                return Request.CreateResponse<string>(HttpStatusCode.NotFound, "Product not found!");
             }
 
-            return Request.CreateResponse<Product>(HttpStatusCode.OK, ProductManager.Products[id]);
+            return Request.CreateResponse<Product>(HttpStatusCode.OK, product);
         }
 
         // POST: api/Product
         public HttpResponseMessage Post([FromBody] Product product)
         {
 
-            if (product.Key == null || product.Key == "")
+            if (product.Name == null || product.Name == "")
             {
                 return Request.CreateResponse<string>(HttpStatusCode.BadRequest, "Product is not valid");
             }
             //enter new product into db
-            ProductManager.Products.Add(product);
             return Request.CreateResponse<string>(HttpStatusCode.OK, "Product has been added");
         }
 
         // PUT: api/Product/5
-        public HttpResponseMessage Put(int id, [FromBody] Product product)
+        public HttpResponseMessage Put(string name, [FromBody] Product product)
         {
+
+            Product oldProduct = Service.GetProduct(name);
             //enter new employee into db
-            if (ProductManager.Products.Count == 0)
+            if (oldProduct.Name == "" || oldProduct.Name==null)
             {
-                return Request.CreateResponse<string>(HttpStatusCode.NotFound, "List of products is empty");
+                return Request.CreateResponse<string>(HttpStatusCode.NotFound, "Product not found!");
             }
-            else if (id < 0 || id >= ProductManager.Products.Count())//simulating not found
-            {
-                return Request.CreateResponse<string>(HttpStatusCode.NotFound, "Product not found");
-            }
-            else if (product.Key == null || product.Key == "")
-            {
-                return Request.CreateResponse<string>(HttpStatusCode.BadRequest, "Product info is not valid");
-            }
-            ProductManager.Products[id] = product;
             return Request.CreateResponse<string>(HttpStatusCode.OK, "Product info edited");
 
         }
 
         // DELETE: api/Product/5
-        public HttpResponseMessage Delete(int id)
+        public HttpResponseMessage Delete(string name)
         {
             //find product with the id
-            if (ProductManager.Products.Count == 0)
-            {
-                return Request.CreateResponse<string>(HttpStatusCode.NotFound, "List of products is empty");
-            }
-            else if (id < 0 || id >= ProductManager.Products.Count())//simulating not found
+            Product product = Service.GetProduct(name);
+            if (product.Name=="" || product.Name == null)//simulating not found
             {
                 return Request.CreateResponse<string>(HttpStatusCode.NotFound, "Product not found");
             }
-            ProductManager.Products.Remove(ProductManager.Products[id]);
             return Request.CreateResponse<string>(HttpStatusCode.OK, "Product removed");
         }
     }

@@ -1,111 +1,84 @@
-﻿using System;
+﻿using Supermarket.Model;
+using Supermarket.Service;
+using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Security.Cryptography;
 using System.Web.Http;
 
 namespace Supermarket.WebAPI.Controllers
 {
-    public class Employee
-    {
-        public string Name { get; set; }
-        public Employee(string name)
-        {
-            Name = name;
-        }
-    }
-    public class EmployeeManager
-    {
-        static public List<Employee> Employees { get; set; }
-        public EmployeeManager()
-        {
-            Employees = new List<Employee>() { new Employee("Pero") };
-        }
-    }
+    
+    
     public class EmployeeController : ApiController
     {
-        public EmployeeManager Manager { get; set; }
+        public EmployeeService Service { get; set; }
         public EmployeeController()
         {
-            Manager = new EmployeeManager();
+            Service = new EmployeeService();
         }
         // GET: api/employee
         public HttpResponseMessage GetAllEmployees()
         {
-
-            if (EmployeeManager.Employees.Count == 0)
+            List<Employee> employees = Service.GetAllEmployees();
+            if (employees.Count == 0)
             {
                 return Request.CreateResponse<string>(HttpStatusCode.NotFound, "List of employees is empty");
             }
-            //get employees from db
-            return Request.CreateResponse<List<Employee>>(HttpStatusCode.OK, EmployeeManager.Employees);
+            return Request.CreateResponse<List<Employee>>(HttpStatusCode.OK, employees);
         }
 
         // GET: api/employee/5
-        public HttpResponseMessage Get(int id)
+        public HttpResponseMessage Get(string OIB)
         {
-            //find product with the id
-            if (EmployeeManager.Employees.Count == 0)
+            Employee employee = Service.GetEmployee(OIB);
+            //find employee with the oib
+            if (employee.OIB == null || employee.OIB == "")
             {
-                return Request.CreateResponse<string>(HttpStatusCode.NotFound, "List of products is empty");
+                return Request.CreateResponse<string>(HttpStatusCode.NotFound, "Employee not found!");
             }
-            else if (id < 0 || id >= EmployeeManager.Employees.Count())//simulating not found
-            {
-                return Request.CreateResponse<string>(HttpStatusCode.NotFound, "Product not found");
-            }
-
-            return Request.CreateResponse<Employee>(HttpStatusCode.OK, EmployeeManager.Employees[id]);
+            return Request.CreateResponse<Employee>(HttpStatusCode.OK, employee);
         }
 
         // POST: api/employee
         public HttpResponseMessage Post([FromBody] Employee employee)
         {
-
-            if (employee.Name == null || employee.Name == "")
+            bool isPosted = Service.PostEmployee(employee.FirstName, employee.LastName, employee.Address, employee.OIB);
+            if (!isPosted)
             {
                 return Request.CreateResponse<string>(HttpStatusCode.BadRequest, "Employee info is not valid");
             }
-            //enter new product into db
-            EmployeeManager.Employees.Add(employee);
+            //enter new employee into db
+            
             return Request.CreateResponse<string>(HttpStatusCode.OK, "Employee has been added");
         }
 
         // PUT: api/employee/5
-        public HttpResponseMessage Put(int id, [FromBody] Employee employee)
+        public HttpResponseMessage Put(string OIB, [FromBody] Employee employee)
         {
+            Employee oldEmployee = Service.GetEmployee(OIB);
             //enter new employee into db
-            if (EmployeeManager.Employees.Count == 0)
-            {
-                return Request.CreateResponse<string>(HttpStatusCode.NotFound, "List of employees is empty");
-            }
-            else if (id < 0 || id >= EmployeeManager.Employees.Count())//simulating not found
+            if (oldEmployee.OIB == null || oldEmployee.OIB=="")
             {
                 return Request.CreateResponse<string>(HttpStatusCode.NotFound, "Employee not found");
             }
-            else if (employee.Name == null || employee.Name == "")
-            {
-                return Request.CreateResponse<string>(HttpStatusCode.BadRequest, "Employee info is not valid");
-            }
-            EmployeeManager.Employees[id] = employee;
             return Request.CreateResponse<string>(HttpStatusCode.OK, "Employee info edited");
 
         }
 
         // DELETE: api/employee/5
-        public HttpResponseMessage Delete(int id)
+        public HttpResponseMessage Delete(string OIB)
         {
-            //find product with the id
-            if (EmployeeManager.Employees.Count == 0)
-            {
-                return Request.CreateResponse<string>(HttpStatusCode.NotFound, "List of employees is empty");
-            }
-            else if (id < 0 || id >= EmployeeManager.Employees.Count())//simulating not found
+            //find product with the oib
+            Employee employee = Service.GetEmployee(OIB);
+            if (employee.OIB == null || employee.OIB == "" )
             {
                 return Request.CreateResponse<string>(HttpStatusCode.NotFound, "Employee not found");
             }
             //simulate delete
-            EmployeeManager.Employees.Remove(EmployeeManager.Employees[id]);
             return Request.CreateResponse<string>(HttpStatusCode.OK, "Employee removed");
         }
     }
