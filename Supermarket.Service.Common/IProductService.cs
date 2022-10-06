@@ -13,5 +13,8 @@ namespace Supermarket.Service.Common
         ProductRepository ProductRepository { get; set; }
         List<Product> GetAllProducts();
         Product GetProduct(string name);
+        bool PostProduct(string name, decimal price, string mark);
+        bool EditProduct(string oldName, Product product);
+        bool DeleteProduct(string name);
     }
 }

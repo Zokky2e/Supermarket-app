@@ -51,12 +51,11 @@ namespace Supermarket.WebAPI.Controllers
         // POST: api/Product
         public HttpResponseMessage Post([FromBody] Product product)
         {
-
-            if (product.Name == null || product.Name == "")
+            bool isPosted = Service.PostProduct(product.Name, product.Price, product.Mark);
+            if (!isPosted)
             {
                 return Request.CreateResponse<string>(HttpStatusCode.BadRequest, "Product is not valid");
             }
-            //enter new product into db
             return Request.CreateResponse<string>(HttpStatusCode.OK, "Product has been added");
         }
 
@@ -64,9 +63,9 @@ namespace Supermarket.WebAPI.Controllers
         public HttpResponseMessage Put(string name, [FromBody] Product product)
         {
 
-            Product oldProduct = Service.GetProduct(name);
+            bool isEdited = Service.EditProduct(name, product);
             //enter new employee into db
-            if (oldProduct.Name == "" || oldProduct.Name==null)
+            if (!isEdited)
             {
                 return Request.CreateResponse<string>(HttpStatusCode.NotFound, "Product not found!");
             }
@@ -77,9 +76,8 @@ namespace Supermarket.WebAPI.Controllers
         // DELETE: api/Product/5
         public HttpResponseMessage Delete(string name)
         {
-            //find product with the id
-            Product product = Service.GetProduct(name);
-            if (product.Name=="" || product.Name == null)//simulating not found
+            bool isDeleted = Service.DeleteProduct(name);
+            if (!isDeleted)//simulating not found
             {
                 return Request.CreateResponse<string>(HttpStatusCode.NotFound, "Product not found");
             }

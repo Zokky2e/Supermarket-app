@@ -4,6 +4,8 @@ using Supermarket.Service.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -26,6 +28,19 @@ namespace Supermarket.Service
         {
             Product product = ProductRepository.GetProduct(name);
             return product;
+        }
+        public bool PostProduct(string name, decimal price, string mark)
+        {
+            Product product = new Product(name, price, mark);
+            return ProductRepository.PostProduct(product);
+        }
+        public bool EditProduct(string name, Product product)
+        {
+            return ProductRepository.EditProduct(name, product);
+        }
+        public bool DeleteProduct(string name)
+        {
+            return ProductRepository.DeleteProduct(name);
         }
     }
     

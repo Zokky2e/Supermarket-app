@@ -12,5 +12,7 @@ namespace Supermarket.Repository.Common
         List<Employee> GetAllEmployees();
         Employee GetEmployee(string OIB);
         bool PostEmployee(Employee employee);
+        bool EditEmployee(string OIB, Employee employee);
+        bool DeleteEmployee(string OIB);
     }
 }

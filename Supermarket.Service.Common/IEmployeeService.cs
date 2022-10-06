@@ -14,5 +14,7 @@ namespace Supermarket.Service.Common
         List<Employee> GetAllEmployees();
         Employee GetEmployee(string OIB);
         bool PostEmployee(string FirstName, string LastName, string Address, string OIB);
+        bool EditEmployee(string OIB, Employee employee);
+        bool DeleteEmployee(string OIB);
     }
 }

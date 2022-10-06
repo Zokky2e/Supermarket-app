@@ -17,7 +17,7 @@ namespace Supermarket.Repository
             string connectionString = "Server=tcp:mono-supermarket-sql.database.windows.net,1433;Initial Catalog=supermarket;Persist Security Info=False;User ID=admin123;Password=adm!n123;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
             SqlConnection connection = new SqlConnection(connectionString);
 
-            //get products from db
+            //get products from db - ne radi pogledaj kasnije
             string queryProducts = "select * from Products;";
             SqlCommand getProducts = new SqlCommand(queryProducts, connection);
             try
@@ -70,6 +70,69 @@ namespace Supermarket.Repository
                 Console.WriteLine(e.Message);
             }
             return product;
+        }
+        public bool PostProduct(Product product)
+        {
+            string connectionString = "Server=tcp:mono-supermarket-sql.database.windows.net,1433;Initial Catalog=supermarket;Persist Security Info=False;User ID=admin123;Password=adm!n123;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
+            SqlConnection connection = new SqlConnection(connectionString);
+            string queryInsertProduct = $"insert into Products values(default,\'{product.Name}\',{product.Price}, \'{product.Mark}\');";
+            SqlCommand insertProduct = new SqlCommand(queryInsertProduct, connection);
+            try
+            {
+                connection.Open();
+                SqlDataAdapter productInserter = new SqlDataAdapter(insertProduct);
+                productInserter.Fill(new System.Data.DataSet("Products"));
+                connection.Close();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                return false;
+            }
+            return true;
+        }
+        public bool EditProduct(string name, Product product)
+        {
+            string connectionString = "Server=tcp:mono-supermarket-sql.database.windows.net,1433;Initial Catalog=supermarket;Persist Security Info=False;User ID=admin123;Password=adm!n123;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
+            SqlConnection connection = new SqlConnection(connectionString);
+            string queryEditProduct = $"update Products set Name=\'{product.Name}\', Price={product.Price}, Mark=\'{product.Mark}\' where Name = \'{name}\';";
+            SqlCommand editProduct = new SqlCommand(queryEditProduct, connection);
+            try
+            {
+                Product oldProduct = GetProduct(name);
+                connection.Open();
+                SqlDataAdapter productEditer = new SqlDataAdapter(editProduct);
+                productEditer.Fill(new System.Data.DataSet("Products"));
+                connection.Close();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                return false;
+            }
+            return true;
+
+        }
+        public bool DeleteProduct(string name)
+        {
+            string connectionString = "Server=tcp:mono-supermarket-sql.database.windows.net,1433;Initial Catalog=supermarket;Persist Security Info=False;User ID=admin123;Password=adm!n123;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
+            SqlConnection connection = new SqlConnection(connectionString);
+            string queryDeleteProduct = $"delete Products where Name = \'{name}\'";
+            SqlCommand deleteProduct = new SqlCommand(queryDeleteProduct, connection);
+            try
+            {
+                Product oldProduct = GetProduct(name);
+                connection.Open();
+                SqlDataAdapter productDeleter = new SqlDataAdapter(deleteProduct);
+                productDeleter.Fill(new System.Data.DataSet("Products"));
+                connection.Close();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                return false;
+            }
+            return true;
         }
     }
 }

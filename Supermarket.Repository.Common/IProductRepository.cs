@@ -11,5 +11,8 @@ namespace Supermarket.Repository.Common
     {
         List<Product> GetAllProducts();
         Product GetProduct(string name);
+        bool PostProduct(Product product);
+        bool EditProduct(string name, Product product);
+        bool DeleteProduct(string name);
     }
 }

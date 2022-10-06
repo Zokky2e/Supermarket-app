@@ -8,6 +8,7 @@ using System.Net;
 using System.Net.Http;
 using System.Security.Cryptography;
 using System.Web.Http;
+using System.Xml.Linq;
 
 namespace Supermarket.WebAPI.Controllers
 {
@@ -35,7 +36,7 @@ namespace Supermarket.WebAPI.Controllers
         public HttpResponseMessage Get(string OIB)
         {
             Employee employee = Service.GetEmployee(OIB);
-            //find employee with the oib
+            
             if (employee.OIB == null || employee.OIB == "")
             {
                 return Request.CreateResponse<string>(HttpStatusCode.NotFound, "Employee not found!");
@@ -51,7 +52,7 @@ namespace Supermarket.WebAPI.Controllers
             {
                 return Request.CreateResponse<string>(HttpStatusCode.BadRequest, "Employee info is not valid");
             }
-            //enter new employee into db
+            
             
             return Request.CreateResponse<string>(HttpStatusCode.OK, "Employee has been added");
         }
@@ -59,9 +60,10 @@ namespace Supermarket.WebAPI.Controllers
         // PUT: api/employee/5
         public HttpResponseMessage Put(string OIB, [FromBody] Employee employee)
         {
-            Employee oldEmployee = Service.GetEmployee(OIB);
-            //enter new employee into db
-            if (oldEmployee.OIB == null || oldEmployee.OIB=="")
+
+            bool isEdited = Service.EditEmployee(OIB, employee);
+            
+            if (!isEdited)
             {
                 return Request.CreateResponse<string>(HttpStatusCode.NotFound, "Employee not found");
             }
@@ -72,13 +74,12 @@ namespace Supermarket.WebAPI.Controllers
         // DELETE: api/employee/5
         public HttpResponseMessage Delete(string OIB)
         {
-            //find product with the oib
-            Employee employee = Service.GetEmployee(OIB);
-            if (employee.OIB == null || employee.OIB == "" )
+            bool isDeleted = Service.DeleteEmployee(OIB);
+            if (!isDeleted )
             {
                 return Request.CreateResponse<string>(HttpStatusCode.NotFound, "Employee not found");
             }
-            //simulate delete
+            
             return Request.CreateResponse<string>(HttpStatusCode.OK, "Employee removed");
         }
     }

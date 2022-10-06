@@ -20,6 +20,13 @@ namespace Supermarket.Model
             Price = price;
             Mark = mark;
         }
+        public Product(string name, decimal price, string mark)
+        {
+            Id = Guid.NewGuid();
+            Name = name;
+            Price = price;
+            Mark = mark;
+        }
         public Product()
         {
 

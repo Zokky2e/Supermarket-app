@@ -32,5 +32,13 @@ namespace Supermarket.Service
             Employee employee = new Employee(FirstName, LastName, Address, OIB);
             return EmployeeRepository.PostEmployee(employee);
         }
+        public bool EditEmployee(string OIB, Employee employee)
+        {
+            return EmployeeRepository.EditEmployee(OIB, employee);
+        }
+        public bool DeleteEmployee(string OIB)
+        {
+            return EmployeeRepository.DeleteEmployee(OIB);
+        }
     }
 }
