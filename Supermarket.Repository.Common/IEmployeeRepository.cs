@@ -9,10 +9,10 @@ namespace Supermarket.Repository.Common
 {
     public interface IEmployeeRepository
     {
-        List<Employee> GetAllEmployees();
-        Employee GetEmployee(string OIB);
-        bool PostEmployee(Employee employee);
-        bool EditEmployee(string OIB, Employee employee);
-        bool DeleteEmployee(string OIB);
+        Task<List<Employee>> GetAllEmployeesAsync();
+        Task<Employee> GetEmployeeAsync(string OIB);
+        Task<bool> PostEmployeeAsync(EmployeeRest employeeRest, string address = "");
+        Task<bool> EditEmployeeAsync(string OIB, Employee employee);
+        Task<bool> DeleteEmployeeAsync(string OIB);
     }
 }

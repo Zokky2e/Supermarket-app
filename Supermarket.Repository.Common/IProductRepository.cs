@@ -9,10 +9,10 @@ namespace Supermarket.Repository.Common
 {
     public interface IProductRepository
     {
-        List<Product> GetAllProducts();
-        Product GetProduct(string name);
-        bool PostProduct(Product product);
-        bool EditProduct(string name, Product product);
-        bool DeleteProduct(string name);
+       Task< List<Product>> GetAllProductsAsync();
+        Task<Product> GetProductAsync(string name);
+        Task<bool> PostProductAsync(Product product);
+        Task<bool> EditProductAsync(string name, Product product);
+        Task<bool> DeleteProductAsync(string name);
     }
 }

@@ -17,28 +17,32 @@ namespace Supermarket.Service
         {
             EmployeeRepository = new EmployeeRepository();
         }
-        public List<Employee> GetAllEmployees()
+        public async Task<List<Employee>> GetAllEmployeesAsync()
         {
-            List<Employee> employees = EmployeeRepository.GetAllEmployees();
+            List<Employee> employees = await EmployeeRepository.GetAllEmployeesAsync();
             return employees;
         }
-        public Employee GetEmployee(string OIB)
+        public async Task<List<Employee>> GetEmployeeAsync(string OIB)
         {
-            Employee employee = EmployeeRepository.GetEmployee(OIB);
-            return employee;
+            List<Employee> employees = new List<Employee> { await EmployeeRepository.GetEmployeeAsync(OIB) };
+            return employees;
         }
-        public bool PostEmployee(string FirstName, string LastName, string Address, string OIB)
+        public async Task<bool> PostEmployeeAsync(string firstName, string lastName, string OIB, string address = "")
         {
-            Employee employee = new Employee(FirstName, LastName, Address, OIB);
-            return EmployeeRepository.PostEmployee(employee);
+            EmployeeRest employeeRest = new EmployeeRest(firstName, lastName, OIB);
+            if (address == "")
+            {
+                return await EmployeeRepository.PostEmployeeAsync(employeeRest);
+            }
+            return await EmployeeRepository.PostEmployeeAsync(employeeRest, address);
         }
-        public bool EditEmployee(string OIB, Employee employee)
+        public async Task<bool> EditEmployeeAsync(string OIB, Employee employee)
         {
-            return EmployeeRepository.EditEmployee(OIB, employee);
+            return await EmployeeRepository.EditEmployeeAsync(OIB, employee);
         }
-        public bool DeleteEmployee(string OIB)
+        public async Task<bool> DeleteEmployeeAsync(string OIB)
         {
-            return EmployeeRepository.DeleteEmployee(OIB);
+            return await EmployeeRepository.DeleteEmployeeAsync(OIB);
         }
     }
 }

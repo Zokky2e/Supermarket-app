@@ -19,28 +19,28 @@ namespace Supermarket.Service
         {
             ProductRepository = new ProductRepository();
         }
-        public List<Product> GetAllProducts()
+        public async Task<List<Product>> GetAllProductsAsync()
         {
-            List<Product> products = ProductRepository.GetAllProducts();
+            List<Product> products = await ProductRepository.GetAllProductsAsync();
             return products;
         }
-        public Product GetProduct(string name)
+        public async Task<List<Product>> GetProductAsync(string name)
         {
-            Product product = ProductRepository.GetProduct(name);
-            return product;
+            List<Product> products = new List<Product> { await ProductRepository.GetProductAsync(name) };
+            return products;
         }
-        public bool PostProduct(string name, decimal price, string mark)
+        public async Task<bool> PostProductAsync(string name, decimal price, string mark)
         {
             Product product = new Product(name, price, mark);
-            return ProductRepository.PostProduct(product);
+            return await ProductRepository.PostProductAsync(product);
         }
-        public bool EditProduct(string name, Product product)
+        public async Task<bool> EditProductAsync(string name, Product product)
         {
-            return ProductRepository.EditProduct(name, product);
+            return await ProductRepository.EditProductAsync(name, product);
         }
-        public bool DeleteProduct(string name)
+        public async Task<bool> DeleteProductAsync(string name)
         {
-            return ProductRepository.DeleteProduct(name);
+            return await ProductRepository.DeleteProductAsync(name);
         }
     }
     

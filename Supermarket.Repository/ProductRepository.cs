@@ -11,20 +11,19 @@ namespace Supermarket.Repository
 {
     public class ProductRepository : IProductRepository
     {
-        public List<Product> GetAllProducts()
+        public async Task<List<Product>> GetAllProductsAsync()
         {
             List<Product> products = new List<Product>();
             string connectionString = "Server=tcp:mono-supermarket-sql.database.windows.net,1433;Initial Catalog=supermarket;Persist Security Info=False;User ID=admin123;Password=adm!n123;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
             SqlConnection connection = new SqlConnection(connectionString);
 
-            //get products from db - ne radi pogledaj kasnije
             string queryProducts = "select * from Products;";
             SqlCommand getProducts = new SqlCommand(queryProducts, connection);
             try
             {
                 connection.Open();
-                SqlDataReader productReader = getProducts.ExecuteReader();
-                while (productReader.Read())
+                SqlDataReader productReader = await getProducts.ExecuteReaderAsync();
+                while (await productReader.ReadAsync())
                 {
                     products.Add(new Product(
                         Guid.Parse(productReader[0].ToString()),
@@ -41,7 +40,7 @@ namespace Supermarket.Repository
             }
             return products;
         }
-        public Product GetProduct(string name)
+        public async Task<Product> GetProductAsync(string name)
         {
             Product product = new Product();
             string connectionString = "Server=tcp:mono-supermarket-sql.database.windows.net,1433;Initial Catalog=supermarket;Persist Security Info=False;User ID=admin123;Password=adm!n123;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
@@ -53,8 +52,8 @@ namespace Supermarket.Repository
             try
             {
                 connection.Open();
-                SqlDataReader employeeReader = getProduct.ExecuteReader();
-                while (employeeReader.Read())
+                SqlDataReader employeeReader = await getProduct.ExecuteReaderAsync();
+                while (await employeeReader.ReadAsync())
                 {
                     product = new Product(
                          Guid.Parse(employeeReader[0].ToString()),
@@ -71,7 +70,7 @@ namespace Supermarket.Repository
             }
             return product;
         }
-        public bool PostProduct(Product product)
+        public async Task<bool> PostProductAsync(Product product)
         {
             string connectionString = "Server=tcp:mono-supermarket-sql.database.windows.net,1433;Initial Catalog=supermarket;Persist Security Info=False;User ID=admin123;Password=adm!n123;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
             SqlConnection connection = new SqlConnection(connectionString);
@@ -91,7 +90,7 @@ namespace Supermarket.Repository
             }
             return true;
         }
-        public bool EditProduct(string name, Product product)
+        public async Task< bool> EditProductAsync(string name, Product product)
         {
             string connectionString = "Server=tcp:mono-supermarket-sql.database.windows.net,1433;Initial Catalog=supermarket;Persist Security Info=False;User ID=admin123;Password=adm!n123;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
             SqlConnection connection = new SqlConnection(connectionString);
@@ -99,7 +98,7 @@ namespace Supermarket.Repository
             SqlCommand editProduct = new SqlCommand(queryEditProduct, connection);
             try
             {
-                Product oldProduct = GetProduct(name);
+                Product oldProduct = await GetProductAsync(name);
                 connection.Open();
                 SqlDataAdapter productEditer = new SqlDataAdapter(editProduct);
                 productEditer.Fill(new System.Data.DataSet("Products"));
@@ -113,7 +112,7 @@ namespace Supermarket.Repository
             return true;
 
         }
-        public bool DeleteProduct(string name)
+        public async Task<bool> DeleteProductAsync(string name)
         {
             string connectionString = "Server=tcp:mono-supermarket-sql.database.windows.net,1433;Initial Catalog=supermarket;Persist Security Info=False;User ID=admin123;Password=adm!n123;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
             SqlConnection connection = new SqlConnection(connectionString);
@@ -121,7 +120,7 @@ namespace Supermarket.Repository
             SqlCommand deleteProduct = new SqlCommand(queryDeleteProduct, connection);
             try
             {
-                Product oldProduct = GetProduct(name);
+                Product oldProduct = await GetProductAsync(name);
                 connection.Open();
                 SqlDataAdapter productDeleter = new SqlDataAdapter(deleteProduct);
                 productDeleter.Fill(new System.Data.DataSet("Products"));

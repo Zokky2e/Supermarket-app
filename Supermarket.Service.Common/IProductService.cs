@@ -11,10 +11,10 @@ namespace Supermarket.Service.Common
     public interface IProductService
     {
         ProductRepository ProductRepository { get; set; }
-        List<Product> GetAllProducts();
-        Product GetProduct(string name);
-        bool PostProduct(string name, decimal price, string mark);
-        bool EditProduct(string oldName, Product product);
-        bool DeleteProduct(string name);
+        Task<List<Product>> GetAllProductsAsync();
+        Task<List<Product>> GetProductAsync(string name);
+        Task<bool> PostProductAsync(string name, decimal price, string mark);
+        Task<bool> EditProductAsync(string oldName, Product product);
+        Task<bool> DeleteProductAsync(string name);
     }
 }

@@ -13,7 +13,7 @@ namespace Supermarket.Repository
 {
     public class EmployeeRepository : IEmployeeRepository
     {
-        public List<Employee> GetAllEmployees()
+        public async Task<List<Employee>> GetAllEmployeesAsync()
         {
             List<Employee> employees = new List<Employee>();
             string connectionString = "Server=tcp:mono-supermarket-sql.database.windows.net,1433;Initial Catalog=supermarket;Persist Security Info=False;User ID=admin123;Password=adm!n123;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
@@ -24,8 +24,8 @@ namespace Supermarket.Repository
             try
             {
                 connection.Open();
-                SqlDataReader employeeReader = getEmployees.ExecuteReader();
-                while (employeeReader.Read())
+                SqlDataReader employeeReader = await getEmployees.ExecuteReaderAsync();
+                while (await employeeReader.ReadAsync())
                 {
                     employees.Add(new Employee(
                         Guid.Parse(employeeReader[0].ToString()),
@@ -43,19 +43,19 @@ namespace Supermarket.Repository
             }
             return employees;
         }
-        public Employee GetEmployee(string OIB)
+        public async Task<Employee> GetEmployeeAsync(string OIB)
         {
             Employee employee = new Employee();
             string connectionString = "Server=tcp:mono-supermarket-sql.database.windows.net,1433;Initial Catalog=supermarket;Persist Security Info=False;User ID=admin123;Password=adm!n123;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
             SqlConnection connection = new SqlConnection(connectionString);
-            //get employee from db
+
             string queryEmployee = $"select * from Employees where OIB = \'{OIB}\';";
             SqlCommand getEmployees = new SqlCommand(queryEmployee, connection);
             try
             {
                 connection.Open();
-                SqlDataReader employeeReader = getEmployees.ExecuteReader();
-                while (employeeReader.Read())
+                SqlDataReader employeeReader = await getEmployees.ExecuteReaderAsync();
+                while (await employeeReader.ReadAsync())
                 {
                     employee = new Employee(
                          Guid.Parse(employeeReader[0].ToString()),
@@ -73,8 +73,9 @@ namespace Supermarket.Repository
             }
             return employee;
         }
-        public bool PostEmployee(Employee employee)
+        public async Task<bool> PostEmployeeAsync(EmployeeRest employeeRest, string address="")
         {
+            Employee employee = new Employee(employeeRest.FirstName, employeeRest.LastName, employeeRest.OIB, address);
             string connectionString = "Server=tcp:mono-supermarket-sql.database.windows.net,1433;Initial Catalog=supermarket;Persist Security Info=False;User ID=admin123;Password=adm!n123;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
             SqlConnection connection = new SqlConnection(connectionString);
             string queryInsertEmployee = $"insert into Employees values(default,\'{employee.FirstName}\',\'{employee.LastName}\', \'{employee.Address}\', \'{employee.OIB}\');";
@@ -93,7 +94,7 @@ namespace Supermarket.Repository
             }
             return true;
         }
-        public bool EditEmployee(string OIB, Employee employee)
+        public async Task<bool> EditEmployeeAsync(string OIB, Employee employee)
         {
             string connectionString = "Server=tcp:mono-supermarket-sql.database.windows.net,1433;Initial Catalog=supermarket;Persist Security Info=False;User ID=admin123;Password=adm!n123;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
             SqlConnection connection = new SqlConnection(connectionString);
@@ -101,7 +102,7 @@ namespace Supermarket.Repository
             SqlCommand editEmployee = new SqlCommand(queryEditEmployee, connection);
             try
             {
-                Employee oldEmployee = GetEmployee(OIB);
+                Employee oldEmployee = await GetEmployeeAsync(OIB);
                 connection.Open();
                 SqlDataAdapter employeeEditor = new SqlDataAdapter(editEmployee);
                 employeeEditor.Fill(new System.Data.DataSet("Employees"));
@@ -114,7 +115,7 @@ namespace Supermarket.Repository
             }
             return true;
         }
-        public bool DeleteEmployee(string OIB)
+        public async Task<bool> DeleteEmployeeAsync(string OIB)
         {
             string connectionString = "Server=tcp:mono-supermarket-sql.database.windows.net,1433;Initial Catalog=supermarket;Persist Security Info=False;User ID=admin123;Password=adm!n123;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
             SqlConnection connection = new SqlConnection(connectionString);
@@ -122,7 +123,7 @@ namespace Supermarket.Repository
             SqlCommand deleteEmployee = new SqlCommand(queryDeleteEmployee, connection);
             try
             {
-                Employee oldEmployee = GetEmployee(OIB);
+                Employee oldEmployee = await GetEmployeeAsync(OIB);
                 connection.Open();
                 SqlDataAdapter employeeDeleter = new SqlDataAdapter(deleteEmployee);
                 employeeDeleter.Fill(new System.Data.DataSet("Employees"));
