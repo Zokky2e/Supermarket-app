@@ -1,5 +1,7 @@
 ﻿using Supermarket.Model;
+using Supermarket.Model.Common;
 using Supermarket.Service;
+using Supermarket.Service.Common;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
@@ -13,22 +15,22 @@ using System.Xml.Linq;
 
 namespace Supermarket.WebAPI.Controllers
 {
-    
-    
+
+
     public class ProductController : ApiController
     {
 
-        public ProductService Service { get; set; }
-        public ProductController()
+        private IProductService Service { get; set; }
+        public ProductController(IProductService service)
         {
-            Service = new ProductService();
+            Service = service;
         }
 
         // GET: api/product
         [HttpGet]
         public async Task<HttpResponseMessage> GetAllProducts()
         {
-            
+
             List<Product> products = await Service.GetAllProductsAsync();
             List<ProductRest> productsRest = MapToREST(products);
             if (productsRest.Count == 0)
@@ -41,21 +43,21 @@ namespace Supermarket.WebAPI.Controllers
         // GET: api/product/5
         public async Task<HttpResponseMessage> Get(string name)
         {
-            //find product with the id
             List<Product> products = await Service.GetProductAsync(name);
             List<ProductRest> productsRest = MapToREST(products);
-            if (productsRest[0].Name == "" || productsRest[0].Name == null)
+            if (productsRest[0].Name==null || productsRest[0].Name == "")
             {
                 return Request.CreateResponse<string>(HttpStatusCode.NotFound, "Product not found!");
             }
 
-            return Request.CreateResponse<ProductRest>(HttpStatusCode.OK, productsRest[0]);
+            return Request.CreateResponse<List<ProductRest>>(HttpStatusCode.OK, productsRest);
         }
 
         // POST: api/Product
-        public async Task<HttpResponseMessage> Post([FromBody] Product product)
+        public async Task<HttpResponseMessage> Post([FromBody] ProductRest product)
         {
-            bool isPosted = await Service.PostProductAsync(product.Name, product.Price, product.Mark);
+            if (product.Id == Guid.Empty) product.Id = Guid.NewGuid();
+            bool isPosted = await Service.PostProductAsync(new Product(product));
             if (!isPosted)
             {
                 return Request.CreateResponse<string>(HttpStatusCode.BadRequest, "Product is not valid");
@@ -64,14 +66,13 @@ namespace Supermarket.WebAPI.Controllers
         }
 
         // PUT: api/Product/5
-        public async Task<HttpResponseMessage> Put(string name, [FromBody] Product product)
+        public async Task<HttpResponseMessage> Put(string name, [FromBody]  ProductRest product)
         {
-
-            bool isEdited = await Service.EditProductAsync(name, product);
-            //enter new employee into db
+            if (product.Id == Guid.Empty) product.Id = Guid.NewGuid();
+            bool isEdited = await Service.EditProductAsync(name, new Product(product));
             if (!isEdited)
             {
-                return Request.CreateResponse<string>(HttpStatusCode.NotFound, "Product not found!");
+                return Request.CreateResponse<string>(HttpStatusCode.BadRequest, "Product not found!");
             }
             return Request.CreateResponse<string>(HttpStatusCode.OK, "Product info edited");
 
@@ -109,10 +110,10 @@ namespace Supermarket.WebAPI.Controllers
             List<Product> products = new List<Product>();
             if (productsRest.Count > 0)
             {
-                foreach (ProductRest productRest  in productsRest)
+                foreach (ProductRest productRest in productsRest)
                 {
 
-                    products.Add(new Product(productRest.Id, productRest.Name, productRest.Price,  ""));
+                    products.Add(new Product(productRest.Id, productRest.Name, productRest.Price, ""));
                 }
                 return products;
             }

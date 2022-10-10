@@ -1,5 +1,7 @@
 ﻿using Supermarket.Model;
+using Supermarket.Model.Common;
 using Supermarket.Repository;
+using Supermarket.Repository.Common;
 using Supermarket.Service.Common;
 using System;
 using System.Collections.Generic;
@@ -11,38 +13,34 @@ namespace Supermarket.Service
 {
     public class EmployeeService : IEmployeeService
     {
-        public EmployeeRepository EmployeeRepository { get; set; }
+        private IEmployeeRepository Repository { get; set; }
 
-        public EmployeeService()
+        public EmployeeService(IEmployeeRepository repository)
         {
-            EmployeeRepository = new EmployeeRepository();
+            Repository = repository;
         }
         public async Task<List<Employee>> GetAllEmployeesAsync()
         {
-            List<Employee> employees = await EmployeeRepository.GetAllEmployeesAsync();
+            List<Employee> employees = await Repository.GetAllEmployeesAsync();
             return employees;
         }
         public async Task<List<Employee>> GetEmployeeAsync(string OIB)
         {
-            List<Employee> employees = new List<Employee> { await EmployeeRepository.GetEmployeeAsync(OIB) };
+            List<Employee> employees = new List<Employee>();
+            employees.AddRange(await Repository.GetEmployeeAsync(OIB));
             return employees;
         }
-        public async Task<bool> PostEmployeeAsync(string firstName, string lastName, string OIB, string address = "")
+        public async Task<bool> PostEmployeeAsync(IEmployee employee)
         {
-            EmployeeRest employeeRest = new EmployeeRest(firstName, lastName, OIB);
-            if (address == "")
-            {
-                return await EmployeeRepository.PostEmployeeAsync(employeeRest);
-            }
-            return await EmployeeRepository.PostEmployeeAsync(employeeRest, address);
+            return await Repository.PostEmployeeAsync(employee);
         }
-        public async Task<bool> EditEmployeeAsync(string OIB, Employee employee)
+        public async Task<bool> EditEmployeeAsync(string OIB, IEmployee employee)
         {
-            return await EmployeeRepository.EditEmployeeAsync(OIB, employee);
+            return await Repository.EditEmployeeAsync(OIB, employee);
         }
         public async Task<bool> DeleteEmployeeAsync(string OIB)
         {
-            return await EmployeeRepository.DeleteEmployeeAsync(OIB);
+            return await Repository.DeleteEmployeeAsync(OIB);
         }
     }
 }

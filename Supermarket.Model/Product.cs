@@ -1,9 +1,11 @@
 ﻿using Supermarket.Model.Common;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace Supermarket.Model
 {
@@ -30,6 +32,13 @@ namespace Supermarket.Model
         public Product()
         {
 
+        }
+        public Product(IProductRest product)
+        {
+            Id = product.Id;
+            Name = product.Name;
+            Price = product.Price;
+            Mark = "";
         }
         public override string ToString()
         {

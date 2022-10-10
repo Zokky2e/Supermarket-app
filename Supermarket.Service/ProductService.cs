@@ -1,5 +1,7 @@
 ﻿using Supermarket.Model;
+using Supermarket.Model.Common;
 using Supermarket.Repository;
+using Supermarket.Repository.Common;
 using Supermarket.Service.Common;
 using System;
 using System.Collections.Generic;
@@ -13,35 +15,35 @@ namespace Supermarket.Service
 {
     public class ProductService : IProductService
     {
-        public ProductRepository ProductRepository { get; set; }
+        private IProductRepository Repository { get; set; }
 
-        public ProductService()
+        public ProductService(IProductRepository repository)
         {
-            ProductRepository = new ProductRepository();
+            Repository = repository;
         }
         public async Task<List<Product>> GetAllProductsAsync()
         {
-            List<Product> products = await ProductRepository.GetAllProductsAsync();
+            List<Product> products = await Repository.GetAllProductsAsync();
             return products;
         }
         public async Task<List<Product>> GetProductAsync(string name)
         {
-            List<Product> products = new List<Product> { await ProductRepository.GetProductAsync(name) };
+            List<Product> products = new List<Product>();
+            products.AddRange(await Repository.GetProductAsync(name));
             return products;
         }
-        public async Task<bool> PostProductAsync(string name, decimal price, string mark)
+        public async Task<bool> PostProductAsync(IProduct product)
         {
-            Product product = new Product(name, price, mark);
-            return await ProductRepository.PostProductAsync(product);
+            return await Repository.PostProductAsync(product);
         }
-        public async Task<bool> EditProductAsync(string name, Product product)
+        public async Task<bool> EditProductAsync(string name, IProduct product)
         {
-            return await ProductRepository.EditProductAsync(name, product);
+            return await Repository.EditProductAsync(name, product);
         }
         public async Task<bool> DeleteProductAsync(string name)
         {
-            return await ProductRepository.DeleteProductAsync(name);
+            return await Repository.DeleteProductAsync(name);
         }
     }
-    
+
 }

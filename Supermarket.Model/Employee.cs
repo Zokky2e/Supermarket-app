@@ -2,12 +2,14 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Supermarket.Model
 {
-    public class Employee  : IEmployee
+    public class Employee : IEmployee
     {
         public Guid Id { get; set; }
         public string FirstName { get; set; }
@@ -33,6 +35,14 @@ namespace Supermarket.Model
         public Employee()
         {
 
+        }
+        public Employee(IEmployeeRest employee)
+        {
+            Id = employee.Id;
+            FirstName = employee.FirstName;
+            LastName = employee.LastName;
+            Address = "";
+            OIB = employee.OIB;
         }
         public override string ToString()
         {

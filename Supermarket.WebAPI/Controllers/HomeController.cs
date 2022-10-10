@@ -1,4 +1,9 @@
-﻿using System;
+﻿using Autofac;
+using Supermarket.Repository.Common;
+using Supermarket.Repository;
+using Supermarket.Service.Common;
+using Supermarket.Service;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -11,7 +16,7 @@ namespace Supermarket.WebAPI.Controllers
         public ActionResult Index()
         {
             ViewBag.Title = "Home Page";
-
+            
             return View();
         }
     }

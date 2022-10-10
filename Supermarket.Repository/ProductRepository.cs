@@ -1,4 +1,5 @@
 ﻿using Supermarket.Model;
+using Supermarket.Model.Common;
 using Supermarket.Repository.Common;
 using System;
 using System.Collections.Generic;
@@ -6,6 +7,7 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web.Configuration;
 
 namespace Supermarket.Repository
 {
@@ -14,8 +16,7 @@ namespace Supermarket.Repository
         public async Task<List<Product>> GetAllProductsAsync()
         {
             List<Product> products = new List<Product>();
-            string connectionString = "Server=tcp:mono-supermarket-sql.database.windows.net,1433;Initial Catalog=supermarket;Persist Security Info=False;User ID=admin123;Password=adm!n123;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
-            SqlConnection connection = new SqlConnection(connectionString);
+            SqlConnection connection = new SqlConnection(WebConfigurationManager.AppSettings["connectionString"]);
 
             string queryProducts = "select * from Products;";
             SqlCommand getProducts = new SqlCommand(queryProducts, connection);
@@ -40,13 +41,12 @@ namespace Supermarket.Repository
             }
             return products;
         }
-        public async Task<Product> GetProductAsync(string name)
+        public async Task<List<Product>> GetProductAsync(string name)
         {
-            Product product = new Product();
-            string connectionString = "Server=tcp:mono-supermarket-sql.database.windows.net,1433;Initial Catalog=supermarket;Persist Security Info=False;User ID=admin123;Password=adm!n123;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
-            SqlConnection connection = new SqlConnection(connectionString);
+            List<Product> products = new List<Product>();
+            SqlConnection connection = new SqlConnection(WebConfigurationManager.AppSettings["connectionString"]);
             //get employee from db
-            string queryProduct = $"select * from Products where Name = \'{name}\'";
+            string queryProduct = $"select * from Products where Name like \'{name}%\'";
 
             SqlCommand getProduct = new SqlCommand(queryProduct, connection);
             try
@@ -55,11 +55,11 @@ namespace Supermarket.Repository
                 SqlDataReader employeeReader = await getProduct.ExecuteReaderAsync();
                 while (await employeeReader.ReadAsync())
                 {
-                    product = new Product(
+                    products.Add(new Product(
                          Guid.Parse(employeeReader[0].ToString()),
                          employeeReader[1].ToString(),
                          decimal.Parse(employeeReader[2].ToString()),
-                         employeeReader[3].ToString());
+                         employeeReader[3].ToString()));
                 }
                 employeeReader.Close();
                 connection.Close();
@@ -68,14 +68,16 @@ namespace Supermarket.Repository
             {
                 Console.WriteLine(e.Message);
             }
-            return product;
+            return products;
         }
-        public async Task<bool> PostProductAsync(Product product)
+        public async Task<bool> PostProductAsync(IProduct product)
         {
-            string connectionString = "Server=tcp:mono-supermarket-sql.database.windows.net,1433;Initial Catalog=supermarket;Persist Security Info=False;User ID=admin123;Password=adm!n123;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
-            SqlConnection connection = new SqlConnection(connectionString);
-            string queryInsertProduct = $"insert into Products values(default,\'{product.Name}\',{product.Price}, \'{product.Mark}\');";
+            SqlConnection connection = new SqlConnection(WebConfigurationManager.AppSettings["connectionString"]);
+            string queryInsertProduct = $"insert into Products values(default,@Name,@Price,@Mark);";
             SqlCommand insertProduct = new SqlCommand(queryInsertProduct, connection);
+            insertProduct.Parameters.AddWithValue("@Name", product.Name);
+            insertProduct.Parameters.AddWithValue("@Price", product.Price);
+            insertProduct.Parameters.AddWithValue("@Mark", product.Mark);
             try
             {
                 connection.Open();
@@ -90,15 +92,17 @@ namespace Supermarket.Repository
             }
             return true;
         }
-        public async Task< bool> EditProductAsync(string name, Product product)
+        public async Task<bool> EditProductAsync(string name, IProduct product)
         {
-            string connectionString = "Server=tcp:mono-supermarket-sql.database.windows.net,1433;Initial Catalog=supermarket;Persist Security Info=False;User ID=admin123;Password=adm!n123;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
-            SqlConnection connection = new SqlConnection(connectionString);
-            string queryEditProduct = $"update Products set Name=\'{product.Name}\', Price={product.Price}, Mark=\'{product.Mark}\' where Name = \'{name}\';";
+            SqlConnection connection = new SqlConnection(WebConfigurationManager.AppSettings["connectionString"]);
+            string queryEditProduct = $"update Products set Name=@Name, Price=@Price, Mark=@Mark where Name = @OldName;";
             SqlCommand editProduct = new SqlCommand(queryEditProduct, connection);
+            editProduct.Parameters.AddWithValue("@Name", product.Name);
+            editProduct.Parameters.AddWithValue("@Price", product.Price);
+            editProduct.Parameters.AddWithValue("@Mark", product.Mark);
+            editProduct.Parameters.AddWithValue("@OldName", name);
             try
             {
-                Product oldProduct = await GetProductAsync(name);
                 connection.Open();
                 SqlDataAdapter productEditer = new SqlDataAdapter(editProduct);
                 productEditer.Fill(new System.Data.DataSet("Products"));
@@ -114,13 +118,11 @@ namespace Supermarket.Repository
         }
         public async Task<bool> DeleteProductAsync(string name)
         {
-            string connectionString = "Server=tcp:mono-supermarket-sql.database.windows.net,1433;Initial Catalog=supermarket;Persist Security Info=False;User ID=admin123;Password=adm!n123;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
-            SqlConnection connection = new SqlConnection(connectionString);
+            SqlConnection connection = new SqlConnection(WebConfigurationManager.AppSettings["connectionString"]);
             string queryDeleteProduct = $"delete Products where Name = \'{name}\'";
             SqlCommand deleteProduct = new SqlCommand(queryDeleteProduct, connection);
             try
             {
-                Product oldProduct = await GetProductAsync(name);
                 connection.Open();
                 SqlDataAdapter productDeleter = new SqlDataAdapter(deleteProduct);
                 productDeleter.Fill(new System.Data.DataSet("Products"));

@@ -1,5 +1,7 @@
 ﻿using Supermarket.Model;
+using Supermarket.Model.Common;
 using Supermarket.Repository;
+using Supermarket.Repository.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,11 +12,11 @@ namespace Supermarket.Service.Common
 {
     public interface IEmployeeService
     {
-        EmployeeRepository EmployeeRepository { get; set; }
+
         Task<List<Employee>> GetAllEmployeesAsync();
         Task<List<Employee>> GetEmployeeAsync(string OIB);
-        Task<bool> PostEmployeeAsync(string FirstName, string LastName, string Address, string OIB);
-        Task<bool> EditEmployeeAsync(string OIB, Employee employee);
+        Task<bool> PostEmployeeAsync(IEmployee employee);
+        Task<bool> EditEmployeeAsync(string OIB, IEmployee employee);
         Task<bool> DeleteEmployeeAsync(string OIB);
     }
 }

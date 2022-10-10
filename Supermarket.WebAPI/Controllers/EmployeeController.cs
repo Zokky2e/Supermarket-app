@@ -1,5 +1,6 @@
 ﻿using Supermarket.Model;
 using Supermarket.Service;
+using Supermarket.Service.Common;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
@@ -13,14 +14,14 @@ using System.Xml.Linq;
 
 namespace Supermarket.WebAPI.Controllers
 {
-    
-    
+
+
     public class EmployeeController : ApiController
     {
-        public EmployeeService Service { get; set; }
-        public EmployeeController()
+        private IEmployeeService Service { get; set; }
+        public EmployeeController(IEmployeeService service)
         {
-            Service = new EmployeeService();
+            Service = service;
         }
         // GET: api/employee
         public async Task<HttpResponseMessage> GetAllEmployeesAsync()
@@ -33,24 +34,25 @@ namespace Supermarket.WebAPI.Controllers
             }
             return Request.CreateResponse<List<EmployeeRest>>(HttpStatusCode.OK, employeesRest);
         }
-        
+
         // GET: api/employee/5
         public async Task<HttpResponseMessage> Get(string OIB)
         {
             List<Employee> employees = await Service.GetEmployeeAsync(OIB);
             List<EmployeeRest> employeesRest = MapToREST(employees);
 
-            if (employees[0].OIB == null || employees[0].OIB == "")
+            if (employeesRest.Count == 0)
             {
                 return Request.CreateResponse<string>(HttpStatusCode.NotFound, "Employee not found!");
             }
-            return Request.CreateResponse<EmployeeRest>(HttpStatusCode.OK, employeesRest[0]);
+            return Request.CreateResponse<List<EmployeeRest>>(HttpStatusCode.OK, employeesRest);
         }
 
         // POST: api/employee
         public async Task<HttpResponseMessage> Post([FromBody] EmployeeRest employee)
         {
-            bool isPosted = await Service.PostEmployeeAsync(employee.FirstName, employee.LastName, employee.OIB);
+            if (employee.Id == Guid.Empty) employee.Id = Guid.NewGuid();
+            bool isPosted = await Service.PostEmployeeAsync(new Employee(employee));
             if (!isPosted)
             {
                 return Request.CreateResponse<string>(HttpStatusCode.BadRequest, "Employee info is not valid");
@@ -61,15 +63,15 @@ namespace Supermarket.WebAPI.Controllers
         }
 
         // PUT: api/employee/5
-        public async Task<HttpResponseMessage> Put(string OIB, [FromBody] Employee employee)
+        public async Task<HttpResponseMessage> Put(string OIB, [FromBody] EmployeeRest employee)
         {
-            
 
-            bool isEdited = await Service.EditEmployeeAsync(OIB, employee);
-            
+            if (employee.Id == Guid.Empty) employee.Id = Guid.NewGuid();
+            bool isEdited = await Service.EditEmployeeAsync(OIB, new Employee(employee));
+
             if (!isEdited)
             {
-                return Request.CreateResponse<string>(HttpStatusCode.NotFound, "Employee not found");
+                return Request.CreateResponse<string>(HttpStatusCode.BadRequest, "Something went wrong!");
             }
             return Request.CreateResponse<string>(HttpStatusCode.OK, "Employee info edited");
 
@@ -78,12 +80,12 @@ namespace Supermarket.WebAPI.Controllers
         // DELETE: api/employee/5
         public async Task<HttpResponseMessage> Delete(string OIB)
         {
-            bool isDeleted =  await Service.DeleteEmployeeAsync(OIB);
-            if (!isDeleted )
+            bool isDeleted = await Service.DeleteEmployeeAsync(OIB);
+            if (!isDeleted)
             {
                 return Request.CreateResponse<string>(HttpStatusCode.NotFound, "Employee not found");
             }
-            
+
             return Request.CreateResponse<string>(HttpStatusCode.OK, "Employee removed");
         }
 
@@ -111,8 +113,8 @@ namespace Supermarket.WebAPI.Controllers
             {
                 foreach (EmployeeRest employeeRest in employeesRest)
                 {
-                    
-                    employees.Add(new Employee(employeeRest.Id,employeeRest.FirstName,employeeRest.LastName,employeeRest.OIB,""));
+
+                    employees.Add(new Employee(employeeRest.Id, employeeRest.FirstName, employeeRest.LastName, employeeRest.OIB, ""));
                 }
                 return employees;
             }

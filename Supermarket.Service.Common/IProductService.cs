@@ -1,4 +1,5 @@
 ﻿using Supermarket.Model;
+using Supermarket.Model.Common;
 using Supermarket.Repository;
 using System;
 using System.Collections.Generic;
@@ -10,11 +11,10 @@ namespace Supermarket.Service.Common
 {
     public interface IProductService
     {
-        ProductRepository ProductRepository { get; set; }
         Task<List<Product>> GetAllProductsAsync();
         Task<List<Product>> GetProductAsync(string name);
-        Task<bool> PostProductAsync(string name, decimal price, string mark);
-        Task<bool> EditProductAsync(string oldName, Product product);
+        Task<bool> PostProductAsync(IProduct productRest);
+        Task<bool> EditProductAsync(string oldName, IProduct productRest);
         Task<bool> DeleteProductAsync(string name);
     }
 }
