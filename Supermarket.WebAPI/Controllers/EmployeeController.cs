@@ -32,16 +32,26 @@ namespace Supermarket.WebAPI.Controllers
         public async Task<HttpResponseMessage> GetAllEmployeesAsync
             (
             string query = "",
-            string bornBefore  = "1990-01-01",
-            string bornAfter = "2010-01-01",
+            DateTime? bornBefore = null,
+            DateTime? bornAfter = null,
             bool hasAddress = false,
-            string sortBy = "Id",
-            string sortOrder = "asc",
+            string sortBy = "LastName",
+            string sortOrder = "desc",
             int pageSize=4,
             int pageNumber=1
             )
         {
-            Filtering filtering = new Filtering(DateTime.Parse(bornBefore),DateTime.Parse(bornAfter),
+            if (!bornBefore.HasValue)
+            {
+                bornBefore = DateTime.MaxValue;
+            }
+            if (!bornAfter.HasValue)
+            {
+                bornAfter = DateTime.Parse("1/1/1753 12:00:00 AM ");
+            }
+            Filtering filtering = new Filtering(
+                (DateTime)bornBefore,
+                (DateTime)bornAfter,
                 query,
                 hasAddress);
             Sorting sorting = new Sorting(

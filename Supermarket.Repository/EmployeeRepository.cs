@@ -22,9 +22,43 @@ namespace Supermarket.Repository
             List<Employee> employees = new List<Employee>();
             SqlConnection connection = new SqlConnection(WebConfigurationManager.AppSettings["connectionString"]);
             StringBuilder queryEmployees = new StringBuilder().Append("select * from Employees");
-            //get employees from db
-
             SqlCommand getEmployees = new SqlCommand(queryEmployees.ToString(), connection);
+            //get employees from db
+            //filtering
+            if (filtering.Query != ""
+                || filtering.HasAddress == true
+                || filtering.BornBefore != null
+                || filtering.BornAfter != null)
+            {
+                queryEmployees.AppendLine(" where ");
+            }
+            if (filtering.Query != "")
+            {
+                queryEmployees.Append("LastName like @LastName and ");
+                getEmployees.Parameters.AddWithValue("@LastName", "%" + filtering.Query + "%");
+            }
+            if (filtering.HasAddress == true)
+            {
+                queryEmployees.Append("Address = '' and ");
+            }
+            if (filtering.BornBefore != null)
+            {
+                queryEmployees.Append("Birthday <= @BornBefore ");
+                getEmployees.Parameters.AddWithValue("@BornBefore", filtering.BornBefore);
+            }
+            if (filtering.BornAfter != null)
+            {
+                queryEmployees.AppendLine("and Birthday >= @BornAfter");
+                getEmployees.Parameters.AddWithValue("@BornAfter", filtering.BornAfter);
+            }
+            //sorting
+            queryEmployees.AppendLine($"Order By {sorting.SortBy} {sorting.SortOrder}");
+            //paging
+            queryEmployees.AppendLine("Offset @PageNumber rows");
+            queryEmployees.AppendLine("FETCH NEXT @RowsOfPage ROWS ONLY");
+            getEmployees.Parameters.AddWithValue("@PageNumber", ((paging.PageNumber - 1) * paging.PageSize)).ToString();
+            getEmployees.Parameters.AddWithValue("@RowsOfPage", paging.PageSize);
+            getEmployees.CommandText = queryEmployees.ToString();
             try
             {
                 connection.Open();

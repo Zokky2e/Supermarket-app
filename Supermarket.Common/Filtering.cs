@@ -14,9 +14,9 @@ namespace Supermarket.Common
         public bool HasAddress { get; set; }
         public Filtering(DateTime bornBefore, DateTime bornAfter, string query, bool hasAddress)
         {
-            Query = query;
             BornBefore = bornBefore;
             BornAfter = bornAfter;
+            Query = query;
             HasAddress = hasAddress;
         }
     }
