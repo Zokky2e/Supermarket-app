@@ -1,4 +1,5 @@
-﻿using Supermarket.Model;
+﻿using Supermarket.Common;
+using Supermarket.Model;
 using Supermarket.Model.Common;
 using System;
 using System.Collections.Generic;
@@ -10,7 +11,7 @@ namespace Supermarket.Repository.Common
 {
     public interface IEmployeeRepository
     {
-        Task<List<Employee>> GetAllEmployeesAsync();
+        Task<List<Employee>> GetAllEmployeesAsync(Paging paging, Sorting sorting, Filtering filtering);
         Task<List<Employee>> GetEmployeeAsync(string OIB);
         Task<bool> PostEmployeeAsync(IEmployee employee);
         Task<bool> EditEmployeeAsync(string OIB, IEmployee employee);

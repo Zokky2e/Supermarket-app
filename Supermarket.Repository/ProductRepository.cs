@@ -26,11 +26,12 @@ namespace Supermarket.Repository
                 SqlDataReader productReader = await getProducts.ExecuteReaderAsync();
                 while (await productReader.ReadAsync())
                 {
-                    products.Add(new Product(
-                        Guid.Parse(productReader[0].ToString()),
-                        productReader[1].ToString(),
-                        decimal.Parse(productReader[2].ToString()),
-                        productReader[3].ToString()));
+                    Product currentProduct = new Product();
+                    currentProduct.Id = Guid.Parse(productReader[0].ToString());
+                    currentProduct.Name = productReader[1].ToString();
+                    currentProduct.Price = decimal.Parse(productReader[2].ToString());
+                    currentProduct.Mark = productReader[3].ToString();
+                    products.Add(currentProduct);
                 }
                 productReader.Close();
                 connection.Close();
@@ -46,22 +47,24 @@ namespace Supermarket.Repository
             List<Product> products = new List<Product>();
             SqlConnection connection = new SqlConnection(WebConfigurationManager.AppSettings["connectionString"]);
             //get employee from db
-            string queryProduct = $"select * from Products where Name like \'{name}%\'";
+            string queryProduct = $"select * from Products where Name like @Name +\'%\'";
 
             SqlCommand getProduct = new SqlCommand(queryProduct, connection);
+            getProduct.Parameters.AddWithValue("@Name", name);
             try
             {
                 connection.Open();
-                SqlDataReader employeeReader = await getProduct.ExecuteReaderAsync();
-                while (await employeeReader.ReadAsync())
+                SqlDataReader productReader = await getProduct.ExecuteReaderAsync();
+                while (await productReader.ReadAsync())
                 {
-                    products.Add(new Product(
-                         Guid.Parse(employeeReader[0].ToString()),
-                         employeeReader[1].ToString(),
-                         decimal.Parse(employeeReader[2].ToString()),
-                         employeeReader[3].ToString()));
+                    Product currentProduct = new Product();
+                    currentProduct.Id = Guid.Parse(productReader[0].ToString());
+                    currentProduct.Name = productReader[1].ToString();
+                    currentProduct.Price = decimal.Parse(productReader[2].ToString());
+                    currentProduct.Mark = productReader[3].ToString();
+                    products.Add(currentProduct);
                 }
-                employeeReader.Close();
+                productReader.Close();
                 connection.Close();
             }
             catch (Exception e)
@@ -119,8 +122,9 @@ namespace Supermarket.Repository
         public async Task<bool> DeleteProductAsync(string name)
         {
             SqlConnection connection = new SqlConnection(WebConfigurationManager.AppSettings["connectionString"]);
-            string queryDeleteProduct = $"delete Products where Name = \'{name}\'";
+            string queryDeleteProduct = $"delete Products where Name = @Name";
             SqlCommand deleteProduct = new SqlCommand(queryDeleteProduct, connection);
+            deleteProduct.Parameters.AddWithValue("@Name", name);
             try
             {
                 connection.Open();

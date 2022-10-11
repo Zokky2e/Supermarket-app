@@ -1,4 +1,5 @@
-﻿using Supermarket.Model;
+﻿using Supermarket.Common;
+using Supermarket.Model;
 using Supermarket.Model.Common;
 using Supermarket.Repository;
 using Supermarket.Repository.Common;
@@ -19,9 +20,9 @@ namespace Supermarket.Service
         {
             Repository = repository;
         }
-        public async Task<List<Employee>> GetAllEmployeesAsync()
+        public async Task<List<Employee>> GetAllEmployeesAsync(Paging paging, Sorting sorting, Filtering filtering)
         {
-            List<Employee> employees = await Repository.GetAllEmployeesAsync();
+            List<Employee> employees = await Repository.GetAllEmployeesAsync(paging, sorting, filtering);
             return employees;
         }
         public async Task<List<Employee>> GetEmployeeAsync(string OIB)
@@ -32,10 +33,12 @@ namespace Supermarket.Service
         }
         public async Task<bool> PostEmployeeAsync(IEmployee employee)
         {
+            if (employee.Address == null || employee.Address == "") { employee.Address = ""; }
             return await Repository.PostEmployeeAsync(employee);
         }
         public async Task<bool> EditEmployeeAsync(string OIB, IEmployee employee)
         {
+            if (employee.Address == null || employee.Address == "") { employee.Address = ""; }
             return await Repository.EditEmployeeAsync(OIB, employee);
         }
         public async Task<bool> DeleteEmployeeAsync(string OIB)

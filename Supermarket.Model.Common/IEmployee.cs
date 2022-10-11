@@ -11,6 +11,7 @@ namespace Supermarket.Model.Common
         Guid Id { get; set; }
         string FirstName { get; set; }
         string LastName { get; set; }
+        DateTime Birthday { get; set; }
         string Address { get; set; }
         string OIB { get; set; }
     }

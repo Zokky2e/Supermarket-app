@@ -34,10 +34,12 @@ namespace Supermarket.Service
         }
         public async Task<bool> PostProductAsync(IProduct product)
         {
+            if(product.Mark == null || product.Mark == "") { product.Mark = ""; }
             return await Repository.PostProductAsync(product);
         }
         public async Task<bool> EditProductAsync(string name, IProduct product)
         {
+            if (product.Mark == null || product.Mark == "") { product.Mark = ""; }
             return await Repository.EditProductAsync(name, product);
         }
         public async Task<bool> DeleteProductAsync(string name)

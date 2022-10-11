@@ -16,18 +16,6 @@ namespace Supermarket.Model
         {
 
         }
-        public ProductRest(Guid id, string name, decimal price)
-        {
-            Id = id;
-            Name = name;
-            Price = price;
-        }
-        public ProductRest(string name, decimal price)
-        {
-            Id = Guid.NewGuid();
-            Name = name;
-            Price = price;
-        }
 
     }
 }

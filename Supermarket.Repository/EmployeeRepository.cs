@@ -1,4 +1,5 @@
-﻿using Supermarket.Model;
+﻿using Supermarket.Common;
+using Supermarket.Model;
 using Supermarket.Model.Common;
 using Supermarket.Repository.Common;
 using System;
@@ -16,25 +17,28 @@ namespace Supermarket.Repository
 {
     public class EmployeeRepository : IEmployeeRepository
     {
-        public async Task<List<Employee>> GetAllEmployeesAsync()
+        public async Task<List<Employee>> GetAllEmployeesAsync(Paging paging, Sorting sorting, Filtering filtering)
         {
             List<Employee> employees = new List<Employee>();
             SqlConnection connection = new SqlConnection(WebConfigurationManager.AppSettings["connectionString"]);
+            StringBuilder queryEmployees = new StringBuilder().Append("select * from Employees");
             //get employees from db
-            string queryEmployees = "select * from Employees;";
-            SqlCommand getEmployees = new SqlCommand(queryEmployees, connection);
+
+            SqlCommand getEmployees = new SqlCommand(queryEmployees.ToString(), connection);
             try
             {
                 connection.Open();
                 SqlDataReader employeeReader = await getEmployees.ExecuteReaderAsync();
                 while (await employeeReader.ReadAsync())
                 {
-                    employees.Add(new Employee(
-                        Guid.Parse(employeeReader[0].ToString()),
-                        employeeReader[1].ToString(),
-                        employeeReader[2].ToString(),
-                        employeeReader[4].ToString(),
-                        employeeReader[3].ToString()));
+                    Employee currentEmployee = new Employee();
+                    currentEmployee.Id = Guid.Parse(employeeReader[0].ToString());
+                    currentEmployee.FirstName = employeeReader[1].ToString();
+                    currentEmployee.LastName = employeeReader[2].ToString();
+                    currentEmployee.OIB = employeeReader[4].ToString();
+                    currentEmployee.Address = employeeReader[3].ToString();
+                    currentEmployee.Birthday = DateTime.Parse(employeeReader[5].ToString());
+                    employees.Add(currentEmployee);
                 }
                 employeeReader.Close();
                 connection.Close();
@@ -50,20 +54,24 @@ namespace Supermarket.Repository
             List<Employee> employees = new List<Employee>();
             SqlConnection connection = new SqlConnection(WebConfigurationManager.AppSettings["connectionString"]);
 
-            string queryEmployee = $"select * from Employees where OIB Like \'%{OIB}%\';";
+            string queryEmployee = $"select * from Employees where OIB Like @OIB;";
+
             SqlCommand getEmployees = new SqlCommand(queryEmployee, connection);
+            getEmployees.Parameters.AddWithValue("@OIB", "%"+OIB+"%");
             try
             {
                 connection.Open();
                 SqlDataReader employeeReader = await getEmployees.ExecuteReaderAsync();
                 while (await employeeReader.ReadAsync())
                 {
-                    employees.Add(new Employee(
-                         Guid.Parse(employeeReader[0].ToString()),
-                         employeeReader[1].ToString(),
-                         employeeReader[2].ToString(),
-                         employeeReader[4].ToString(),
-                         employeeReader[3].ToString()));
+                    Employee currentEmployee = new Employee();
+                    currentEmployee.Id = Guid.Parse(employeeReader[0].ToString());
+                    currentEmployee.FirstName = employeeReader[1].ToString();
+                    currentEmployee.LastName = employeeReader[2].ToString();
+                    currentEmployee.OIB = employeeReader[4].ToString();
+                    currentEmployee.Address = employeeReader[3].ToString();
+                    currentEmployee.Birthday = DateTime.Parse(employeeReader[5].ToString());
+                    employees.Add(currentEmployee);
                 }
                 employeeReader.Close();
                 connection.Close();
@@ -77,12 +85,13 @@ namespace Supermarket.Repository
         public async Task<bool> PostEmployeeAsync(IEmployee employee)
         {
             SqlConnection connection = new SqlConnection(WebConfigurationManager.AppSettings["connectionString"]);
-            string queryInsertEmployee = $"insert into Employees values(default,@FirstName,@LastName, @Address, @OIB);";
+            string queryInsertEmployee = $"insert into Employees values(default,@FirstName,@LastName, @Address, @OIB, @Birthday);";
             SqlCommand insertEmployee = new SqlCommand(queryInsertEmployee, connection);
             insertEmployee.Parameters.AddWithValue("@FirstName", employee.FirstName);
             insertEmployee.Parameters.AddWithValue("@LastName", employee.LastName);
             insertEmployee.Parameters.AddWithValue("@Address", employee.Address);
             insertEmployee.Parameters.AddWithValue("@OIB", employee.OIB);
+            insertEmployee.Parameters.AddWithValue("@Birthday", employee.Birthday);
             try
             {
                 connection.Open();
@@ -100,18 +109,18 @@ namespace Supermarket.Repository
         public async Task<bool> EditEmployeeAsync(string OIB, IEmployee employee)
         {
             SqlConnection connection = new SqlConnection(WebConfigurationManager.AppSettings["connectionString"]);
-            string queryEditEmployee = $"update Employees set FirstName=@FirstName, LastName=@LastName, Address=@Address, OIB=@OIB where OIB = @OldOIB;";
+            string queryEditEmployee = $"update Employees set FirstName=@FirstName, LastName=@LastName, Address=@Address, OIB=@OIB, Birthday = @Birthday where OIB = @OldOIB;";
             SqlCommand editEmployee = new SqlCommand(queryEditEmployee, connection);
             editEmployee.Parameters.AddWithValue("@FirstName", employee.FirstName);
             editEmployee.Parameters.AddWithValue("@LastName", employee.LastName);
             editEmployee.Parameters.AddWithValue("@Address", employee.Address);
             editEmployee.Parameters.AddWithValue("@OIB", employee.OIB);
+            editEmployee.Parameters.AddWithValue("@Birthday", employee.Birthday);
             editEmployee.Parameters.AddWithValue("@OldOIB", OIB);
             try
             {
                 connection.Open();
-                SqlDataAdapter employeeEditor = new SqlDataAdapter(editEmployee);
-                employeeEditor.Fill(new System.Data.DataSet("Employees"));
+                await editEmployee.ExecuteNonQueryAsync();
                 connection.Close();
             }
             catch (Exception e)
@@ -124,8 +133,9 @@ namespace Supermarket.Repository
         public async Task<bool> DeleteEmployeeAsync(string OIB)
         {
             SqlConnection connection = new SqlConnection(WebConfigurationManager.AppSettings["connectionString"]);
-            string queryDeleteEmployee = $"delete Employees where OIB = \'{OIB}\'";
+            string queryDeleteEmployee = $"delete Employees where OIB = @OIB";
             SqlCommand deleteEmployee = new SqlCommand(queryDeleteEmployee, connection);
+            deleteEmployee.Parameters.AddWithValue("@OIB", OIB);
             try
             {
                 connection.Open();

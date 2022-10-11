@@ -1,4 +1,5 @@
-﻿using Supermarket.Model;
+﻿using AutoMapper;
+using Supermarket.Model;
 using Supermarket.Model.Common;
 using Supermarket.Service;
 using Supermarket.Service.Common;
@@ -21,9 +22,12 @@ namespace Supermarket.WebAPI.Controllers
     {
 
         private IProductService Service { get; set; }
-        public ProductController(IProductService service)
+        private IMapper Mapper { get; set; }
+        public ProductController(IMapper mapper, IProductService service)
         {
             Service = service;
+            Mapper = mapper;
+            
         }
 
         // GET: api/product
@@ -45,7 +49,7 @@ namespace Supermarket.WebAPI.Controllers
         {
             List<Product> products = await Service.GetProductAsync(name);
             List<ProductRest> productsRest = MapToREST(products);
-            if (productsRest[0].Name==null || productsRest[0].Name == "")
+            if (productsRest.Count==0)
             {
                 return Request.CreateResponse<string>(HttpStatusCode.NotFound, "Product not found!");
             }
@@ -57,7 +61,7 @@ namespace Supermarket.WebAPI.Controllers
         public async Task<HttpResponseMessage> Post([FromBody] ProductRest product)
         {
             if (product.Id == Guid.Empty) product.Id = Guid.NewGuid();
-            bool isPosted = await Service.PostProductAsync(new Product(product));
+            bool isPosted = await Service.PostProductAsync(Mapper.Map(product, new Product()));
             if (!isPosted)
             {
                 return Request.CreateResponse<string>(HttpStatusCode.BadRequest, "Product is not valid");
@@ -69,7 +73,7 @@ namespace Supermarket.WebAPI.Controllers
         public async Task<HttpResponseMessage> Put(string name, [FromBody]  ProductRest product)
         {
             if (product.Id == Guid.Empty) product.Id = Guid.NewGuid();
-            bool isEdited = await Service.EditProductAsync(name, new Product(product));
+            bool isEdited = await Service.EditProductAsync(name, Mapper.Map<Product>(product));
             if (!isEdited)
             {
                 return Request.CreateResponse<string>(HttpStatusCode.BadRequest, "Product not found!");
@@ -90,36 +94,36 @@ namespace Supermarket.WebAPI.Controllers
         }
         private List<ProductRest> MapToREST(List<Product> products)
         {
-            List<ProductRest> productsRest = new List<ProductRest>();
+            List<ProductRest> productsRest = new List<ProductRest>() { };
             if (products.Count > 0)
             {
                 foreach (Product product in products)
                 {
-                    ProductRest productRest = new ProductRest(product.Id, product.Name, product.Price);
+                    ProductRest productRest = Mapper.Map<ProductRest>(product);
                     productsRest.Add(productRest);
                 }
                 return productsRest;
             }
             else
             {
-                return null;
+                return productsRest;
             }
         }
         private List<Product> MapToDomain(List<ProductRest> productsRest)
         {
-            List<Product> products = new List<Product>();
+            List<Product> products = new List<Product>() { };
             if (productsRest.Count > 0)
             {
                 foreach (ProductRest productRest in productsRest)
                 {
-
-                    products.Add(new Product(productRest.Id, productRest.Name, productRest.Price, ""));
+                    Product product = Mapper.Map<Product>(productRest);
+                    products.Add(product);
                 }
                 return products;
             }
             else
             {
-                return null;
+                return products;
             }
         }
     }

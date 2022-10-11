@@ -12,21 +12,9 @@ namespace Supermarket.Model
         public Guid Id { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
+        public DateTime Birthday { get; set; }
         public string OIB { get; set; }
-        public EmployeeRest(Guid id, string firstName, string lastName, string oib)
-        {
-            Id = id;
-            FirstName = firstName;
-            LastName = lastName;
-            OIB = oib;
-        }
-        public EmployeeRest(string firstName, string lastName, string oib)
-        {
-            Id = Guid.NewGuid();
-            FirstName = firstName;
-            LastName = lastName;
-            OIB = oib;
-        }
+        
         public EmployeeRest()
         {
 

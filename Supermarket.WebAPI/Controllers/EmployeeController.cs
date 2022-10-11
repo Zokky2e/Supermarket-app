@@ -1,4 +1,7 @@
-﻿using Supermarket.Model;
+﻿using AutoMapper;
+using Supermarket.Common;
+using Supermarket.Model;
+using Supermarket.Model.Common;
 using Supermarket.Service;
 using Supermarket.Service.Common;
 using System;
@@ -19,14 +22,32 @@ namespace Supermarket.WebAPI.Controllers
     public class EmployeeController : ApiController
     {
         private IEmployeeService Service { get; set; }
-        public EmployeeController(IEmployeeService service)
+        private IMapper Mapper;
+        public EmployeeController(IMapper mapper,IEmployeeService service)
         {
             Service = service;
+            Mapper = mapper;
         }
         // GET: api/employee
-        public async Task<HttpResponseMessage> GetAllEmployeesAsync()
+        public async Task<HttpResponseMessage> GetAllEmployeesAsync
+            (
+            string query = "",
+            string bornBefore  = "1990-01-01",
+            string bornAfter = "2010-01-01",
+            bool hasAddress = false,
+            string sortBy = "Id",
+            string sortOrder = "asc",
+            int pageSize=4,
+            int pageNumber=1
+            )
         {
-            List<Employee> employees = await Service.GetAllEmployeesAsync();
+            Filtering filtering = new Filtering(DateTime.Parse(bornBefore),DateTime.Parse(bornAfter),
+                query,
+                hasAddress);
+            Sorting sorting = new Sorting(
+                sortBy, sortOrder);
+            Paging paging = new Paging(pageSize,pageNumber);
+            List<Employee> employees = await Service.GetAllEmployeesAsync(paging, sorting, filtering);
             List<EmployeeRest> employeesRest = MapToREST(employees);
             if (employeesRest.Count == 0)
             {
@@ -46,13 +67,13 @@ namespace Supermarket.WebAPI.Controllers
                 return Request.CreateResponse<string>(HttpStatusCode.NotFound, "Employee not found!");
             }
             return Request.CreateResponse<List<EmployeeRest>>(HttpStatusCode.OK, employeesRest);
-        }
+            }
 
         // POST: api/employee
         public async Task<HttpResponseMessage> Post([FromBody] EmployeeRest employee)
         {
             if (employee.Id == Guid.Empty) employee.Id = Guid.NewGuid();
-            bool isPosted = await Service.PostEmployeeAsync(new Employee(employee));
+            bool isPosted = await Service.PostEmployeeAsync(Mapper.Map<Employee>(employee));
             if (!isPosted)
             {
                 return Request.CreateResponse<string>(HttpStatusCode.BadRequest, "Employee info is not valid");
@@ -67,7 +88,7 @@ namespace Supermarket.WebAPI.Controllers
         {
 
             if (employee.Id == Guid.Empty) employee.Id = Guid.NewGuid();
-            bool isEdited = await Service.EditEmployeeAsync(OIB, new Employee(employee));
+            bool isEdited = await Service.EditEmployeeAsync(OIB, Mapper.Map<Employee>(employee));
 
             if (!isEdited)
             {
@@ -91,36 +112,36 @@ namespace Supermarket.WebAPI.Controllers
 
         private List<EmployeeRest> MapToREST(List<Employee> employees)
         {
-            List<EmployeeRest> employeesRest = new List<EmployeeRest>();
+            List<EmployeeRest> employeesRest = new List<EmployeeRest>() { };
             if (employees.Count > 0)
             {
                 foreach (Employee employee in employees)
                 {
-                    EmployeeRest employeeRest = new EmployeeRest(employee.Id, employee.FirstName, employee.LastName, employee.OIB);
+                    EmployeeRest employeeRest = Mapper.Map<EmployeeRest>(employee);
                     employeesRest.Add(employeeRest);
                 }
                 return employeesRest;
             }
             else
             {
-                return null;
+                return employeesRest;
             }
         }
         private List<Employee> MapToDomain(List<EmployeeRest> employeesRest)
         {
-            List<Employee> employees = new List<Employee>();
+            List<Employee> employees = new List<Employee>() { };
             if (employeesRest.Count > 0)
             {
                 foreach (EmployeeRest employeeRest in employeesRest)
                 {
-
-                    employees.Add(new Employee(employeeRest.Id, employeeRest.FirstName, employeeRest.LastName, employeeRest.OIB, ""));
+                    Employee employee = Mapper.Map<Employee>(employeeRest);
+                    employees.Add(employee);
                 }
                 return employees;
             }
             else
             {
-                return null;
+                return employees;
             }
         }
     }
