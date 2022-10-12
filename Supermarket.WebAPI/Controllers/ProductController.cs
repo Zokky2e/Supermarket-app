@@ -32,7 +32,7 @@ namespace Supermarket.WebAPI.Controllers
 
         // GET: api/product
         [HttpGet]
-        public async Task<HttpResponseMessage> GetAllProducts()
+        public async Task<HttpResponseMessage> GetAllProductsAsync()
         {
 
             List<Product> products = await Service.GetAllProductsAsync();
@@ -45,7 +45,7 @@ namespace Supermarket.WebAPI.Controllers
         }
 
         // GET: api/product/5
-        public async Task<HttpResponseMessage> Get(string name)
+        public async Task<HttpResponseMessage> GetAsync(string name)
         {
             List<Product> products = await Service.GetProductAsync(name);
             List<ProductRest> productsRest = MapToREST(products);
@@ -58,7 +58,7 @@ namespace Supermarket.WebAPI.Controllers
         }
 
         // POST: api/Product
-        public async Task<HttpResponseMessage> Post([FromBody] ProductRest product)
+        public async Task<HttpResponseMessage> PostAsync([FromBody] ProductRest product)
         {
             if (product.Id == Guid.Empty) product.Id = Guid.NewGuid();
             bool isPosted = await Service.PostProductAsync(Mapper.Map(product, new Product()));
@@ -70,7 +70,7 @@ namespace Supermarket.WebAPI.Controllers
         }
 
         // PUT: api/Product/5
-        public async Task<HttpResponseMessage> Put(string name, [FromBody]  ProductRest product)
+        public async Task<HttpResponseMessage> PutAsync(string name, [FromBody]  ProductRest product)
         {
             if (product.Id == Guid.Empty) product.Id = Guid.NewGuid();
             bool isEdited = await Service.EditProductAsync(name, Mapper.Map<Product>(product));
@@ -83,7 +83,7 @@ namespace Supermarket.WebAPI.Controllers
         }
 
         // DELETE: api/Product/5
-        public async Task<HttpResponseMessage> Delete(string name)
+        public async Task<HttpResponseMessage> DeleteAsync(string name)
         {
             bool isDeleted = await Service.DeleteProductAsync(name);
             if (!isDeleted)//simulating not found
