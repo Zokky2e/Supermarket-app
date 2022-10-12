@@ -37,21 +37,14 @@ namespace Supermarket.WebAPI.Controllers
             bool hasAddress = false,
             string sortBy = "LastName",
             string sortOrder = "desc",
-            int pageSize=4,
+            int pageSize=10,
             int pageNumber=1
             )
         {
-            if (!bornBefore.HasValue)
-            {
-                bornBefore = DateTime.MaxValue;
-            }
-            if (!bornAfter.HasValue)
-            {
-                bornAfter = DateTime.Parse("1/1/1753 12:00:00 AM ");
-            }
+            
             Filtering filtering = new Filtering(
-                (DateTime)bornBefore,
-                (DateTime)bornAfter,
+                bornBefore,
+                bornAfter,
                 query,
                 hasAddress);
             Sorting sorting = new Sorting(

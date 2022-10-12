@@ -10,7 +10,7 @@ namespace Supermarket.Common
     {
         public int PageSize { get; set; }
         public int PageNumber { get; set; }
-        public Paging(int pageSize=4, int pageNumber=1)
+        public Paging(int pageSize, int pageNumber)
         {
             PageSize = pageSize;
             PageNumber = pageNumber;

@@ -21,38 +21,42 @@ namespace Supermarket.Repository
         {
             List<Employee> employees = new List<Employee>();
             SqlConnection connection = new SqlConnection(WebConfigurationManager.AppSettings["connectionString"]);
-            StringBuilder queryEmployees = new StringBuilder().Append("select * from Employees");
-            SqlCommand getEmployees = new SqlCommand(queryEmployees.ToString(), connection);
+
             //get employees from db
+            StringBuilder queryEmployees = new StringBuilder().Append("select * from Employees ");
+            SqlCommand getEmployees = new SqlCommand(queryEmployees.ToString(), connection);
+
             //filtering
-            if (filtering.Query != ""
+            if (!string.IsNullOrWhiteSpace(filtering.Query)
                 || filtering.HasAddress == true
                 || filtering.BornBefore != null
                 || filtering.BornAfter != null)
             {
-                queryEmployees.AppendLine(" where ");
+                queryEmployees.AppendLine("where 1=1 ");
             }
-            if (filtering.Query != "")
+            if (!string.IsNullOrWhiteSpace(filtering.Query))
             {
-                queryEmployees.Append("LastName like @LastName and ");
+                queryEmployees.Append("and LastName like @LastName ");
                 getEmployees.Parameters.AddWithValue("@LastName", "%" + filtering.Query + "%");
             }
             if (filtering.HasAddress == true)
             {
-                queryEmployees.Append("Address = '' and ");
+                queryEmployees.Append("and Address = ''");
             }
             if (filtering.BornBefore != null)
             {
-                queryEmployees.Append("Birthday <= @BornBefore ");
+                queryEmployees.Append("and Birthday <= @BornBefore ");
                 getEmployees.Parameters.AddWithValue("@BornBefore", filtering.BornBefore);
             }
             if (filtering.BornAfter != null)
             {
-                queryEmployees.AppendLine("and Birthday >= @BornAfter");
+                queryEmployees.Append("and Birthday >= @BornAfter ");
                 getEmployees.Parameters.AddWithValue("@BornAfter", filtering.BornAfter);
             }
+
             //sorting
             queryEmployees.AppendLine($"Order By {sorting.SortBy} {sorting.SortOrder}");
+
             //paging
             queryEmployees.AppendLine("Offset @PageNumber rows");
             queryEmployees.AppendLine("FETCH NEXT @RowsOfPage ROWS ONLY");
