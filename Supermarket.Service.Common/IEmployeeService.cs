@@ -15,7 +15,8 @@ namespace Supermarket.Service.Common
     {
 
         Task<List<Employee>> GetAllEmployeesAsync(Paging paging, Sorting sorting, Filtering filtering);
-        Task<List<Employee>> GetEmployeeAsync(string OIB);
+        Task<List<Employee>> GetEmployeeByOIBAsync(string OIB);
+        Task<Employee> GetEmployeeByIdAsync(Guid id);
         Task<bool> PostEmployeeAsync(IEmployee employee);
         Task<bool> EditEmployeeAsync(string OIB, IEmployee employee);
         Task<bool> DeleteEmployeeAsync(string OIB);

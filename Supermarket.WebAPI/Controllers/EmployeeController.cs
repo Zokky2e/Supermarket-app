@@ -23,7 +23,7 @@ namespace Supermarket.WebAPI.Controllers
     {
         private IEmployeeService Service { get; set; }
         private IMapper Mapper;
-        public EmployeeController(IMapper mapper,IEmployeeService service)
+        public EmployeeController(IMapper mapper, IEmployeeService service)
         {
             Service = service;
             Mapper = mapper;
@@ -37,11 +37,11 @@ namespace Supermarket.WebAPI.Controllers
             bool hasAddress = false,
             string sortBy = "LastName",
             string sortOrder = "desc",
-            int pageSize=10,
-            int pageNumber=1
+            int pageSize = 10,
+            int pageNumber = 1
             )
         {
-            
+
             Filtering filtering = new Filtering(
                 bornBefore,
                 bornAfter,
@@ -49,7 +49,7 @@ namespace Supermarket.WebAPI.Controllers
                 hasAddress);
             Sorting sorting = new Sorting(
                 sortBy, sortOrder);
-            Paging paging = new Paging(pageSize,pageNumber);
+            Paging paging = new Paging(pageSize, pageNumber);
             List<Employee> employees = await Service.GetAllEmployeesAsync(paging, sorting, filtering);
             List<EmployeeRest> employeesRest = MapToREST(employees);
             if (employeesRest.Count == 0)
@@ -60,9 +60,9 @@ namespace Supermarket.WebAPI.Controllers
         }
 
         // GET: api/employee/5
-        public async Task<HttpResponseMessage> Get(string OIB)
+        public async Task<HttpResponseMessage> GetEmployeeByOIBAsync(string OIB)
         {
-            List<Employee> employees = await Service.GetEmployeeAsync(OIB);
+            List<Employee> employees = await Service.GetEmployeeByOIBAsync(OIB);
             List<EmployeeRest> employeesRest = MapToREST(employees);
 
             if (employeesRest.Count == 0)
@@ -70,8 +70,18 @@ namespace Supermarket.WebAPI.Controllers
                 return Request.CreateResponse<string>(HttpStatusCode.NotFound, "Employee not found!");
             }
             return Request.CreateResponse<List<EmployeeRest>>(HttpStatusCode.OK, employeesRest);
-            }
+        }
+        public async Task<HttpResponseMessage> GetEmployeeByIdAsync(Guid id)
+        {
+            Employee employee = await Service.GetEmployeeByIdAsync(id);
+            EmployeeRest employeeRest = Mapper.Map<EmployeeRest>(employee);
 
+            if (employeeRest.OIB=="")
+            {
+                return Request.CreateResponse<string>(HttpStatusCode.NotFound, "Employee not found!");
+            }
+            return Request.CreateResponse<EmployeeRest>(HttpStatusCode.OK, employeeRest);
+        }
         // POST: api/employee
         public async Task<HttpResponseMessage> Post([FromBody] EmployeeRest employee)
         {

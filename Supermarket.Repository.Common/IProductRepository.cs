@@ -11,7 +11,8 @@ namespace Supermarket.Repository.Common
     public interface IProductRepository
     {
         Task<List<Product>> GetAllProductsAsync();
-        Task<List<Product>> GetProductAsync(string name);
+        Task<List<Product>> GetProductByNameAsync(string name);
+        Task<Product> GetProductByIdAsync(Guid id);
         Task<bool> PostProductAsync(IProduct product);
         Task<bool> EditProductAsync(string name, IProduct product);
         Task<bool> DeleteProductAsync(string name);

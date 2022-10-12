@@ -45,9 +45,9 @@ namespace Supermarket.WebAPI.Controllers
         }
 
         // GET: api/product/5
-        public async Task<HttpResponseMessage> GetAsync(string name)
+        public async Task<HttpResponseMessage> GetByNameAsync(string name)
         {
-            List<Product> products = await Service.GetProductAsync(name);
+            List<Product> products = await Service.GetProductByNameAsync(name);
             List<ProductRest> productsRest = MapToREST(products);
             if (productsRest.Count==0)
             {
@@ -55,6 +55,17 @@ namespace Supermarket.WebAPI.Controllers
             }
 
             return Request.CreateResponse<List<ProductRest>>(HttpStatusCode.OK, productsRest);
+        }
+        public async Task<HttpResponseMessage> GetByIdAsync(Guid id)
+        {
+            Product product = await Service.GetProductByIdAsync(id);
+            ProductRest productRest = Mapper.Map<ProductRest>(product);
+            if (productRest.Price == 0)
+            {
+                return Request.CreateResponse<string>(HttpStatusCode.NotFound, "Product not found!");
+            }
+
+            return Request.CreateResponse<ProductRest>(HttpStatusCode.OK, productRest);
         }
 
         // POST: api/Product

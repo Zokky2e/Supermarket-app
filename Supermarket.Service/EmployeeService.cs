@@ -7,6 +7,7 @@ using Supermarket.Service.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -25,10 +26,15 @@ namespace Supermarket.Service
             List<Employee> employees = await Repository.GetAllEmployeesAsync(paging, sorting, filtering);
             return employees;
         }
-        public async Task<List<Employee>> GetEmployeeAsync(string OIB)
+        public async Task<List<Employee>> GetEmployeeByOIBAsync(string OIB)
         {
             List<Employee> employees = new List<Employee>();
-            employees.AddRange(await Repository.GetEmployeeAsync(OIB));
+            employees.AddRange(await Repository.GetEmployeeByOIBAsync(OIB));
+            return employees;
+        }
+        public async Task<Employee> GetEmployeeByIdAsync(Guid id)
+        {
+            Employee employees =(await Repository.GetEmployeeByIdAsync(id));
             return employees;
         }
         public async Task<bool> PostEmployeeAsync(IEmployee employee)

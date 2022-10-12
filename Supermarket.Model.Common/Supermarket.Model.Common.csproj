@@ -73,6 +73,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="IEmployee.cs" />
+    <Compile Include="IEmployeeProduct.cs" />
+    <Compile Include="IEmployeeProductRest.cs" />
     <Compile Include="IEmployeeRest.cs" />
     <Compile Include="IProduct.cs" />
     <Compile Include="IProductRest.cs" />

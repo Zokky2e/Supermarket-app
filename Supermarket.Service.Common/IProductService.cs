@@ -12,9 +12,11 @@ namespace Supermarket.Service.Common
     public interface IProductService
     {
         Task<List<Product>> GetAllProductsAsync();
-        Task<List<Product>> GetProductAsync(string name);
-        Task<bool> PostProductAsync(IProduct productRest);
-        Task<bool> EditProductAsync(string oldName, IProduct productRest);
+        Task<List<Product>> GetProductByNameAsync(string name);
+        Task<Product> GetProductByIdAsync(Guid id);
+
+        Task<bool> PostProductAsync(IProduct product);
+        Task<bool> EditProductAsync(string oldName, IProduct product);
         Task<bool> DeleteProductAsync(string name);
     }
 }

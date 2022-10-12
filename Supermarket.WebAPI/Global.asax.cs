@@ -34,8 +34,10 @@ namespace Supermarket.WebAPI
             //builder.RegisterType<Mapper>().As<IMapper>();
             builder.RegisterType<EmployeeService>().As<IEmployeeService>();
             builder.RegisterType<ProductService>().As<IProductService>();
+            builder.RegisterType<EmployeeProductService>().As<IEmployeeProductService>();
             builder.RegisterType<EmployeeRepository>().As<IEmployeeRepository>();
             builder.RegisterType<ProductRepository>().As<IProductRepository>();
+            builder.RegisterType<EmployeeProductRepository>().As<IEmployeeProductRepository>();
             builder.RegisterAutoMapper(Assembly.GetExecutingAssembly());
             builder.RegisterApiControllers(Assembly.GetExecutingAssembly());
             builder.RegisterWebApiModelBinderProvider();

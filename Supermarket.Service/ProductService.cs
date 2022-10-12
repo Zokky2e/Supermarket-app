@@ -10,6 +10,7 @@ using System.Net;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace Supermarket.Service
 {
@@ -26,11 +27,16 @@ namespace Supermarket.Service
             List<Product> products = await Repository.GetAllProductsAsync();
             return products;
         }
-        public async Task<List<Product>> GetProductAsync(string name)
+        public async Task<List<Product>> GetProductByNameAsync(string name)
         {
             List<Product> products = new List<Product>();
-            products.AddRange(await Repository.GetProductAsync(name));
+            products.AddRange(await Repository.GetProductByNameAsync(name));
             return products;
+        }
+        public async Task<Product> GetProductByIdAsync(Guid id)
+        {
+            Product product = await Repository.GetProductByIdAsync(id);
+            return product;
         }
         public async Task<bool> PostProductAsync(IProduct product)
         {

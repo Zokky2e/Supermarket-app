@@ -41,7 +41,7 @@ namespace Supermarket.Repository
             }
             if (filtering.HasAddress == true)
             {
-                queryEmployees.Append("and Address = ''");
+                queryEmployees.Append("and Address != '' ");
             }
             if (filtering.BornBefore != null)
             {
@@ -87,7 +87,7 @@ namespace Supermarket.Repository
             }
             return employees;
         }
-        public async Task<List<Employee>> GetEmployeeAsync(string OIB)
+        public async Task<List<Employee>> GetEmployeeByOIBAsync(string OIB)
         {
             List<Employee> employees = new List<Employee>();
             SqlConnection connection = new SqlConnection(WebConfigurationManager.AppSettings["connectionString"]);
@@ -120,6 +120,39 @@ namespace Supermarket.Repository
             }
             return employees;
         }
+        public async Task<Employee> GetEmployeeByIdAsync(Guid id)
+        {
+            Employee employee = new Employee();
+            SqlConnection connection = new SqlConnection(WebConfigurationManager.AppSettings["connectionString"]);
+
+            string queryEmployee = $"select * from Employees where EmployeeID = @Id";
+
+            SqlCommand getEmployees = new SqlCommand(queryEmployee, connection);
+            getEmployees.Parameters.AddWithValue("@Id", id);
+            try
+            {
+                connection.Open();
+                SqlDataReader employeeReader = getEmployees.ExecuteReader();
+                while (await employeeReader.ReadAsync())
+                {
+                    Employee currentEmployee = new Employee();
+                    currentEmployee.Id = Guid.Parse(employeeReader[0].ToString());
+                    currentEmployee.FirstName = employeeReader[1].ToString();
+                    currentEmployee.LastName = employeeReader[2].ToString();
+                    currentEmployee.OIB = employeeReader[4].ToString();
+                    currentEmployee.Address = employeeReader[3].ToString();
+                    currentEmployee.Birthday = DateTime.Parse(employeeReader[5].ToString());
+                    employee = currentEmployee;
+                }
+                employeeReader.Close();
+                connection.Close();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+            return employee;
+        }
         public async Task<bool> PostEmployeeAsync(IEmployee employee)
         {
             SqlConnection connection = new SqlConnection(WebConfigurationManager.AppSettings["connectionString"]);
@@ -133,8 +166,7 @@ namespace Supermarket.Repository
             try
             {
                 connection.Open();
-                SqlDataAdapter employeeInserter = new SqlDataAdapter(insertEmployee);
-                employeeInserter.Fill(new System.Data.DataSet("Employees"));
+                await insertEmployee.ExecuteNonQueryAsync();
                 connection.Close();
             }
             catch (Exception e)
@@ -177,8 +209,7 @@ namespace Supermarket.Repository
             try
             {
                 connection.Open();
-                SqlDataAdapter employeeDeleter = new SqlDataAdapter(deleteEmployee);
-                employeeDeleter.Fill(new System.Data.DataSet("Employees"));
+                await deleteEmployee.ExecuteNonQueryAsync();
                 connection.Close();
             }
             catch (Exception e)

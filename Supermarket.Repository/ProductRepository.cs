@@ -42,7 +42,7 @@ namespace Supermarket.Repository
             }
             return products;
         }
-        public async Task<List<Product>> GetProductAsync(string name)
+        public async Task<List<Product>> GetProductByNameAsync(string name)
         {
             List<Product> products = new List<Product>();
             SqlConnection connection = new SqlConnection(WebConfigurationManager.AppSettings["connectionString"]);
@@ -73,6 +73,37 @@ namespace Supermarket.Repository
             }
             return products;
         }
+        public async Task<Product> GetProductByIdAsync(Guid id)
+        {
+            Product product = new Product();
+            SqlConnection connection = new SqlConnection(WebConfigurationManager.AppSettings["connectionString"]);
+            //get employee from db
+            string queryProduct = $"select * from Products where ProductID = @Id";
+
+            SqlCommand getProduct = new SqlCommand(queryProduct, connection);
+            getProduct.Parameters.AddWithValue("@Id", id);
+            try
+            {
+                connection.Open();
+                SqlDataReader productReader = getProduct.ExecuteReader();
+                while (await productReader.ReadAsync())
+                {
+                    Product currentProduct = new Product();
+                    currentProduct.Id = Guid.Parse(productReader[0].ToString());
+                    currentProduct.Name = productReader[1].ToString();
+                    currentProduct.Price = decimal.Parse(productReader[2].ToString());
+                    currentProduct.Mark = productReader[3].ToString();
+                    product = currentProduct;
+                }
+                productReader.Close();
+                connection.Close();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+            return product;
+        }
         public async Task<bool> PostProductAsync(IProduct product)
         {
             SqlConnection connection = new SqlConnection(WebConfigurationManager.AppSettings["connectionString"]);
@@ -84,8 +115,7 @@ namespace Supermarket.Repository
             try
             {
                 connection.Open();
-                SqlDataAdapter productInserter = new SqlDataAdapter(insertProduct);
-                productInserter.Fill(new System.Data.DataSet("Products"));
+                await insertProduct.ExecuteNonQueryAsync();
                 connection.Close();
             }
             catch (Exception e)
@@ -107,8 +137,7 @@ namespace Supermarket.Repository
             try
             {
                 connection.Open();
-                SqlDataAdapter productEditer = new SqlDataAdapter(editProduct);
-                productEditer.Fill(new System.Data.DataSet("Products"));
+                await editProduct.ExecuteNonQueryAsync();
                 connection.Close();
             }
             catch (Exception e)
@@ -128,8 +157,7 @@ namespace Supermarket.Repository
             try
             {
                 connection.Open();
-                SqlDataAdapter productDeleter = new SqlDataAdapter(deleteProduct);
-                productDeleter.Fill(new System.Data.DataSet("Products"));
+                await deleteProduct.ExecuteNonQueryAsync();
                 connection.Close();
             }
             catch (Exception e)
