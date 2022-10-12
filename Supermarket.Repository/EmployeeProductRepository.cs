@@ -45,7 +45,7 @@ namespace Supermarket.Repository
         {
             List<EmployeeProduct> employeeProducts = new List<EmployeeProduct>();
             SqlConnection connection = new SqlConnection(WebConfigurationManager.AppSettings["connectionString"]); ;
-            string queryEmployeeProduct = "select * from EmployeeProduct where Id like @Id";
+            string queryEmployeeProduct = "select * from EmployeeProduct where SupermarketId like @Id";
 
             SqlCommand getEmplyeeProduct = new SqlCommand(queryEmployeeProduct, connection);
             getEmplyeeProduct.Parameters.AddWithValue("@Id", "%" + id + "%");
@@ -58,7 +58,7 @@ namespace Supermarket.Repository
                     EmployeeProduct currentEmployeeProduct = new EmployeeProduct(
                         Guid.Parse(employeeProductReader[0].ToString()),
                         Guid.Parse(employeeProductReader[1].ToString()),
-                        Guid.Parse(employeeProductReader[1].ToString()));
+                        Guid.Parse(employeeProductReader[2].ToString()));
                     employeeProducts.Add(currentEmployeeProduct);
                 }
                 employeeProductReader.Close();
@@ -96,8 +96,9 @@ namespace Supermarket.Repository
             SqlConnection connection = new SqlConnection(WebConfigurationManager.AppSettings["connectionString"]); ;
             string queryEmployeeProduct = "update EmployeeProduct" +
                 " set EmployeeId = @EmployeeId, ProductId = @ProductId" +
-                "where Id = @Id;";
+                " where SupermarketId = @Id;";
             SqlCommand editEmployeeProduct = new SqlCommand(queryEmployeeProduct, connection);
+            editEmployeeProduct.Parameters.AddWithValue("@Id", id);
             editEmployeeProduct.Parameters.AddWithValue("@EmployeeId", employeeProduct.EmployeeId);
             editEmployeeProduct.Parameters.AddWithValue("@ProductId", employeeProduct.ProductId);
             try
@@ -117,8 +118,8 @@ namespace Supermarket.Repository
         public async Task<bool> DeleteEmployeeProductAsync(Guid id)
         {
             SqlConnection connection = new SqlConnection(WebConfigurationManager.AppSettings["connectionString"]); ;
-            string queryEmployeeProduct = "delete EmployeeProduct" +
-                "where Id = @Id;";
+            string queryEmployeeProduct = "delete EmployeeProduct " +
+                "where SupermarketId = @Id;";
 
             SqlCommand deleteEmployeeProduct = new SqlCommand(queryEmployeeProduct, connection);
             deleteEmployeeProduct.Parameters.AddWithValue("@Id", id);

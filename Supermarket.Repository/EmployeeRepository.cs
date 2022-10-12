@@ -99,7 +99,7 @@ namespace Supermarket.Repository
             try
             {
                 connection.Open();
-                SqlDataReader employeeReader = await getEmployees.ExecuteReaderAsync();
+                SqlDataReader employeeReader = getEmployees.ExecuteReader();
                 while (await employeeReader.ReadAsync())
                 {
                     Employee currentEmployee = new Employee();

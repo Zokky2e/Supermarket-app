@@ -54,7 +54,7 @@ namespace Supermarket.Repository
             try
             {
                 connection.Open();
-                SqlDataReader productReader = await getProduct.ExecuteReaderAsync();
+                SqlDataReader productReader = getProduct.ExecuteReader();
                 while (await productReader.ReadAsync())
                 {
                     Product currentProduct = new Product();

@@ -122,10 +122,9 @@ namespace Supermarket.WebAPI.Controllers
             {
                 foreach (EmployeeProductRest employeeProductRest in employeeProductsRest)
                 {
-                    EmployeeProduct employeeProduct =
-                        new EmployeeProduct(employeeProductRest.Id,
-                        EmployeeService.GetEmployeeByOIBAsync(employeeProductRest.EmployeeOIB).Result[0].Id,
-                        ProductService.GetProductByNameAsync(employeeProductRest.ProductName).Result[0].Id);
+                    Guid employeeId = EmployeeService.GetEmployeeByOIBAsync(employeeProductRest.EmployeeOIB).Result[0].Id;
+                    Guid productId = ProductService.GetProductByNameAsync(employeeProductRest.ProductName).Result[0].Id;
+                    EmployeeProduct employeeProduct = new EmployeeProduct(employeeProductRest.Id, employeeId,productId);
                     employeeProducts.Add(employeeProduct);
                 }
                 return employeeProducts;
