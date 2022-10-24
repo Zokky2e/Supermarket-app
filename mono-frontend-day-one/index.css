@@ -1,0 +1,124 @@
+body {
+  margin: 0;
+  width: 100%;
+}
+.navigation-bar {
+  max-width: 1255px;
+  padding: 0 16px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #778698;
+}
+.navigation-bar-logo img {
+  width: 40px;
+}
+.navigation-bar-title {
+  color: white;
+}
+.navigation-bar-more-info a {
+  padding: 12px;
+  color: white;
+  background-color: #9eb2ca;
+  text-decoration: none;
+  border-radius: 25px;
+  cursor: pointer;
+}
+.container {
+  max-width: 1255px;
+  background-color: #c6dffd;
+  padding: 0 16px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+}
+.container-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  margin: 0 auto;
+}
+.container-form button {
+  width: 100px;
+  margin-left: auto;
+  margin-right: 0;
+  padding: 12px;
+  color: white;
+  background-color: #9eb2ca;
+  text-decoration: none;
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+}
+.container-form p {
+  width: 200px;
+  margin: 16px 0;
+}
+.container-form form {
+  display: grid;
+  width: 200px;
+}
+.container-form input {
+  height: 20px;
+  border: none;
+  border-bottom: 1px solid black;
+  padding: 0 4px;
+  border-radius: 16px;
+  margin: 4px 0;
+  outline: none;
+}
+.container-list {
+  display: flex;
+  flex-direction: column;
+}
+.container-list button {
+  background-color: #9eb2ca;
+  border-radius: 20px;
+  margin: 0 auto 4px;
+  border: none;
+  cursor: pointer;
+}
+#titles {
+  background-color: white;
+  display: flex;
+  height: 20px;
+  margin-bottom: 0;
+  font-weight: bold;
+  border: 1px solid black;
+  border-bottom: none;
+  border-right: none;
+}
+#titles li {
+  display: flex;
+  list-style-type: none;
+  width: 100%;
+  min-width: 100px;
+  border-right: 1px solid black;
+}
+#titles li:last-of-type {
+  max-width: 50px;
+}
+#list {
+  background-color: white;
+  display: flex;
+  flex-direction: column;
+  margin-top: 0;
+  border: 1px solid black;
+  border-right: none;
+}
+#list li ul {
+  display: flex;
+  width: 100%;
+  padding-left: 0;
+}
+#list li ul li {
+  list-style-type: none;
+  width: 100%;
+  min-width: 100px;
+  border-right: 1px solid black;
+}
+#list li ul li:last-of-type {
+  max-width: 50px;
+}

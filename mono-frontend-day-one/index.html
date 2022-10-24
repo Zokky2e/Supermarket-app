@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="stylesheet" href="index.css" />
+
+    <title>Document</title>
+  </head>
+  <body>
+    <div class="navigation-bar">
+      <div class="navigation-bar-logo">
+        <img src="moje-e.jpg" alt="logo" />
+      </div>
+      <div class="navigation-bar-title">
+        <h1>EmployeesWebDemo</h1>
+      </div>
+      <div class="navigation-bar-more-info">
+        <a href="https://github.com/Zokky2e/Supermarket-app" target="_blank"
+          >View more</a
+        >
+      </div>
+    </div>
+    <div class="container">
+      <div class="container-form">
+        <p>Enter new employee</p>
+        <form id="form" autocomplete="off">
+          <label>Firstname</label>
+          <input type="text" name="firstName" value="" />
+          <br />
+          <label>Lastname</label>
+          <input type="text" name="lastName" value="" />
+          <br />
+          <label>Email</label>
+          <input type="email" name="email" value="" />
+
+          <button onclick="setAction()">Submit</button>
+        </form>
+      </div>
+      <div class="container-list">
+        <p>Employee List</p>
+        <ol id="titles">
+          <li>Firstname</li>
+          <li>Lastname</li>
+          <li>Email</li>
+          <li>Options</li>
+        </ol>
+        <ol id="list"></ol>
+      </div>
+    </div>
+  </body>
+  <script src="index.js"></script>
+</html>
