@@ -1,0 +1,37 @@
+.container-list {
+  display: flex;
+  flex-direction: column;
+}
+#titles {
+  background-color: white;
+  display: flex;
+  height: 20px;
+  margin-bottom: 0;
+  font-weight: bold;
+  border: 1px solid black;
+  border-bottom: none;
+  border-right: none;
+}
+#titles li {
+  display: flex;
+  list-style-type: none;
+  width: 100%;
+  min-width: 100px;
+  border-right: 1px solid black;
+}
+#titles li:last-of-type {
+  max-width: 50px;
+}
+#list {
+  background-color: white;
+  display: flex;
+  flex-direction: column;
+  margin-top: 0;
+  border: 1px solid black;
+  border-right: none;
+}
+#list li ul {
+  display: flex;
+  width: 100%;
+  padding-left: 0;
+}

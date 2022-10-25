@@ -1,0 +1,23 @@
+.navigation-bar {
+  max-width: 1270px;
+  padding: 0 16px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #778698;
+}
+.navigation-bar-logo img {
+  width: 40px;
+}
+.navigation-bar-title {
+  color: white;
+}
+.navigation-bar-more-info a {
+  padding: 12px;
+  color: white;
+  background-color: #9eb2ca;
+  text-decoration: none;
+  border-radius: 25px;
+  cursor: pointer;
+}
